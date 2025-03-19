@@ -332,128 +332,129 @@ class _CareEaseHomePageState extends State<CareEaseHomePage> {
 
   // QUICK STAT BUTTON with bottom-sheet
   // Modified to place the icon at the far left and the stat value text bigger with black color.
-  
-Widget _buildStatButton(
-  BuildContext context, {
-  required String title,
-  required String statValue,
-  required String defaultValue,
-  required IconData icon,
-  required Color color,
-}) {
-  const statTextStyle = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.bold,
-    color: Colors.black,
-  );
-  const labelTextStyle = TextStyle(
-    fontSize: 12,
-    color: Colors.grey,
-  );
 
-  return Container(
-    height: 60, // Fixed height for consistent alignment
-    padding: const EdgeInsets.symmetric(horizontal: 8),
-    decoration: BoxDecoration(
-      color: color.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: InkWell(
-      onTap: () => _showValueInputBottomSheet(context, title),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start, // Align items to the left
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Icon positioned at the far left
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 18),
-          ),
-          const SizedBox(width: 12),
-          // Column with the label and stat value
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: labelTextStyle,
-              ),
-              Text(
-                statValue,
-                style: statTextStyle,
-              ),
-            ],
-          ),
-        ],
+  Widget _buildStatButton(
+    BuildContext context, {
+    required String title,
+    required String statValue,
+    required String defaultValue,
+    required IconData icon,
+    required Color color,
+  }) {
+    const statTextStyle = TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+      color: Colors.black,
+    );
+    const labelTextStyle = TextStyle(
+      fontSize: 12,
+      color: Colors.grey,
+    );
+
+    return Container(
+      height: 60, // Fixed height for consistent alignment
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
       ),
-    ),
-  );
-}
+      child: InkWell(
+        onTap: () => _showValueInputBottomSheet(context, title),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start, // Align items to the left
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Icon positioned at the far left
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 18),
+            ),
+            const SizedBox(width: 12),
+            // Column with the label and stat value
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: labelTextStyle,
+                ),
+                Text(
+                  statValue,
+                  style: statTextStyle,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   // For "Medical History", "Family History", etc.
   // Each item is its own "bar" with a modern card look
   // Tapping opens a new page with white header, back arrow, center title
   Widget _buildSeparateBar(
-  BuildContext context, {
-  required IconData icon,
-  required Color iconColor,
-  required String title,
-  VoidCallback? onTap,
-}) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 12),
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: const [
-        BoxShadow(
-          color: Colors.black12,
-          blurRadius: 3,
-          offset: Offset(0, 2),
-        ),
-      ],
-    ),
-    child: InkWell(
-      onTap: onTap ??
-          () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => InfoPage(title: title)),
-            );
-          },
-      child: Row(
-        children: [
-          // Circle icon
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.15),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: iconColor),
+    BuildContext context, {
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    VoidCallback? onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 3,
+            offset: Offset(0, 2),
           ),
-          const SizedBox(width: 16),
-          // Title with updated font size 16
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ),
-          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
         ],
       ),
-    ),
-  );
-}
+      child: InkWell(
+        onTap: onTap ??
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => InfoPage(title: title)),
+              );
+            },
+        child: Row(
+          children: [
+            // Circle icon
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: iconColor),
+            ),
+            const SizedBox(width: 16),
+            // Title with updated font size 16
+            Expanded(
+              child: Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
 
   // BOTTOM SHEET for entering values
   // "Save" in white color, pinned at bottom
@@ -540,8 +541,7 @@ Widget _buildStatButton(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child:
-                          const Text("Save", style: TextStyle(fontSize: 16)),
+                      child: const Text("Save", style: TextStyle(fontSize: 16)),
                     ),
                   ),
                 ],

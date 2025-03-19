@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class MyProfileScreen extends StatelessWidget {
-  const MyProfileScreen({super.key});
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,8 @@ class MyProfileScreen extends StatelessWidget {
               // 1) HEADER (Hello, Lucas & Notification Icon)
               // ------------------------------------------------
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -108,18 +109,22 @@ class MyProfileScreen extends StatelessWidget {
                           // Row 1: Gender + Phone
                           Row(
                             children: [
-                              Icon(Icons.male, size: 16, color: Colors.grey[600]),
+                              Icon(Icons.male,
+                                  size: 16, color: Colors.grey[600]),
                               const SizedBox(width: 4),
                               Text(
                                 'Male',
-                                style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                                style: TextStyle(
+                                    fontSize: 13, color: Colors.grey[700]),
                               ),
                               const SizedBox(width: 16),
-                              Icon(Icons.phone, size: 16, color: Colors.grey[600]),
+                              Icon(Icons.phone,
+                                  size: 16, color: Colors.grey[600]),
                               const SizedBox(width: 4),
                               Text(
                                 '60174881122',
-                                style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                                style: TextStyle(
+                                    fontSize: 13, color: Colors.grey[700]),
                               ),
                             ],
                           ),
@@ -128,18 +133,22 @@ class MyProfileScreen extends StatelessWidget {
                           // Row 2: ID + State
                           Row(
                             children: [
-                              Icon(Icons.card_membership, size: 16, color: Colors.grey[600]),
+                              Icon(Icons.card_membership,
+                                  size: 16, color: Colors.grey[600]),
                               const SizedBox(width: 4),
                               Text(
                                 '990411070145',
-                                style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                                style: TextStyle(
+                                    fontSize: 13, color: Colors.grey[700]),
                               ),
                               const SizedBox(width: 16),
-                              Icon(Icons.location_on_outlined, size: 16, color: Colors.grey[600]),
+                              Icon(Icons.location_on_outlined,
+                                  size: 16, color: Colors.grey[600]),
                               const SizedBox(width: 4),
                               Text(
                                 'Pulau Pinang',
-                                style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                                style: TextStyle(
+                                    fontSize: 13, color: Colors.grey[700]),
                               ),
                             ],
                           ),
@@ -240,8 +249,7 @@ class MyProfileScreen extends StatelessWidget {
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
           onTap: onTap,
         ),
-        if (showDivider)
-          const Divider(height: 1, indent: 72, thickness: 0.5),
+        if (showDivider) const Divider(height: 1, indent: 72, thickness: 0.5),
       ],
     );
   }

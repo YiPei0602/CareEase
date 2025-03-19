@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home.dart'; // Import your CareEaseHomePage
+import '../components/main_layout.dart'; // Import your CareEaseHomePage
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -69,7 +69,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   children: [
                     const SizedBox(height: 200),
                     Image.asset(
-                      'assets/CareEase_logo.png',
+                      '../assets/CareEase_logo.png',
                       width: 200,
                     ),
                     const SizedBox(height: 40),
@@ -110,7 +110,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const CareEaseHomePage(),
+                            builder: (context) => MainLayout(),
                           ),
                         );
                       },
