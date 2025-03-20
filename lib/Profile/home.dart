@@ -33,9 +33,9 @@ class _CareEaseHomePageState extends State<CareEaseHomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // "Hello, Lucas 👋"
-                  Column(
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         "Hello, Lucas 👋",
                         style: TextStyle(
@@ -221,10 +221,10 @@ class _CareEaseHomePageState extends State<CareEaseHomePage> {
               // ------------------------------------------------
               // NEW SECTION: HEALTH RECORDS
               // ------------------------------------------------
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
-                  children: const [
+                  children: [
                     Text(
                       "Health Records",
                       style: TextStyle(
@@ -602,7 +602,7 @@ class _CircleProgressPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final strokeWidth = 6.0;
+    const strokeWidth = 6.0;
     final radius = math.min(size.width, size.height) / 2;
 
     // Background circle
@@ -620,7 +620,7 @@ class _CircleProgressPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
 
-    final startAngle = -math.pi / 2; // start from top
+    const startAngle = -math.pi / 2; // start from top
     final sweepAngle = 2 * math.pi * progress; // progress portion
 
     canvas.drawArc(

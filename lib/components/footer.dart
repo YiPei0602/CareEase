@@ -4,7 +4,8 @@ class Footer extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
 
-  Footer({required this.selectedIndex, required this.onItemTapped});
+  const Footer(
+      {super.key, required this.selectedIndex, required this.onItemTapped});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class Footer extends StatelessWidget {
       selectedItemColor: Colors.white,
       unselectedItemColor: Colors.white70,
       type: BottomNavigationBarType.fixed,
-      items: [
+      items: const [
         BottomNavigationBarItem(
             icon: Icon(Icons.track_changes), label: "Daily Tracker"),
         BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Chatbot"),

@@ -201,7 +201,8 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
   }
 
   // Build each condition row with a trailing checkmark
-  Widget _buildConditionItem(String condition, bool isSelected, bool isExpanded) {
+  Widget _buildConditionItem(
+      String condition, bool isSelected, bool isExpanded) {
     final isOthers = condition == "Others";
 
     return Container(
@@ -327,7 +328,8 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
     );
   }
@@ -462,31 +464,31 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
           child: Container(
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            child: Column(
+            child: const Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Big success icon
-                const Icon(
+                Icon(
                   Icons.check_circle,
                   color: Colors.green,
                   size: 64,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 // Title
-                const Text(
+                Text(
                   "Success!",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 // Message
-                const Text(
+                Text(
                   "Your medical history has been updated successfully.",
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
               ],
             ),
           ),

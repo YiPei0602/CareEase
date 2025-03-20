@@ -7,6 +7,8 @@ import '../components/header.dart';
 import '../components/footer.dart';
 
 class MainLayout extends StatefulWidget {
+  const MainLayout({super.key});
+
   @override
   _MainLayoutState createState() => _MainLayoutState();
 }
@@ -15,10 +17,10 @@ class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    DailyTrackerScreen(),
+    const DailyTrackerScreen(),
     ChatbotScreen(),
-    SpotterScreen(),
-    CareEaseHomePage(),
+    const SpotterScreen(),
+    const CareEaseHomePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -33,7 +35,7 @@ class _MainLayoutState extends State<MainLayout> {
       backgroundColor: Colors.white,
 
       // ✅ Use the extracted Header
-      appBar: Header(),
+      appBar: const Header(),
 
       // ✅ Dynamic Content
       body: _screens[_selectedIndex],

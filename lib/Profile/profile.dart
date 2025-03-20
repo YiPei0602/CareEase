@@ -22,9 +22,9 @@ class ProfileScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // "Hello, Lucas 👋"
-                    Column(
+                    const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           "Hello, Lucas 👋",
                           style: TextStyle(
@@ -74,7 +74,7 @@ class ProfileScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     // User Avatar
-                    CircleAvatar(
+                    const CircleAvatar(
                       radius: 35,
                       backgroundImage: AssetImage('assets/vhack_profile.jpg'),
                     ),
