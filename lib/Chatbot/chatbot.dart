@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:careease_app/services/api_service.dart';
+import 'package:careease_app/Chatbot/chat_history.dart';
 
 class ChatbotScreen extends StatefulWidget {
   @override
@@ -6,33 +10,88 @@ class ChatbotScreen extends StatefulWidget {
 }
 
 class _ChatbotScreenState extends State<ChatbotScreen> {
-  List<Map<String, dynamic>> messages = [
-    {'sender': 'CareEase', 'text': "Hey Lucas!\nHow are you feeling today?", 'isUser': false},
-    {'sender': 'Lucas', 'text': "I have a headache today.", 'isUser': true},
-    {'sender': 'CareEase', 'text': "How severe is your headache on a scale of 1-10?", 'isUser': false},
-    {'sender': 'Lucas', 'text': "8", 'isUser': true},
-    {
-      'sender': 'CareEase',
-      'text': "Got it. Do you have any of the following additional symptoms?",
-      'isUser': false,
-      'options': ['Stiff Neck', 'Nausea', 'Sensitive to Light', 'None of These']
-    },
-  ];
+  final TextEditingController messageController = TextEditingController();
+  List<Map<String, dynamic>> messages = [];
+  ScrollController _scrollController = ScrollController();
+  bool showPdfPrompt = false; // Controls PDF prompt visibility
 
-  String selectedOption = "";
+  @override
+  void initState() {
+    super.initState();
+    messages.add({
+      'sender': 'CareEase',
+      'text': "Hey Lucas!\nHow are you feeling today?",
+      'isUser': false
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void sendMessage(String messageText) async {
+    if (messageText.trim().isEmpty) return;
+
+    setState(() {
+      messages.add({
+        'sender': 'You',
+        'text': messageText,
+        'isUser': true,
+      });
+    });
+
+    _scrollToBottom();
+
+    try {
+      final botResponse = await ApiService.sendMessage(messageText);
+
+      setState(() {
+        messages.add({
+          'sender': 'CareEase',
+          'text': botResponse["response"],
+          'isUser': false,
+          'options': botResponse["options"].isNotEmpty ? botResponse["options"] : null, // Only add options if present
+        });
+        if (botResponse["response"].toLowerCase().contains("diagnose") ||
+            botResponse["response"].toLowerCase().contains("possible diseases")) {
+          showPdfPrompt = true;
+        }
+
+      });
+      _scrollToBottom();
+    } catch (error) {
+      setState(() {
+        messages.add({
+          'sender': 'CareEase',
+          'text': "Error connecting to server.",
+          'isUser': false
+        });
+      });
+      _scrollToBottom();
+    }
+  }
+  void _scrollToBottom() {
+    Future.delayed(Duration(milliseconds: 300), () {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  void startNewSession() {
+    setState(() {
+      messages.clear();
+      showPdfPrompt = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () {}),
-      //   title: Text("CareEase"),
-      //   centerTitle: true,
-      //   actions: [IconButton(icon: Icon(Icons.account_circle), onPressed: () {})],
-      //   backgroundColor: Colors.white,
-      //   foregroundColor: Colors.black,
-      //   elevation: 1,
-      // ),
       body: Column(
         children: [
           Padding(
@@ -41,7 +100,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ChatHistoryScreen()), // Link to chat history page
+                    );
+                  },
                   child: Text("Chat History"),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.blue,
@@ -50,7 +114,16 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 ),
                 SizedBox(width: 10),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      messages.clear();
+                      messages.add({
+                        'sender': 'CareEase',
+                        'text': "Hey Lucas!\nHow are you feeling today?",
+                        'isUser': false
+                      });
+                    });
+                  },
                   child: Text("New Session"),
                 )
               ],
@@ -63,11 +136,11 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               itemBuilder: (context, index) {
                 final message = messages[index];
                 final isUser = message['isUser'];
+
                 return Align(
                   alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
                   child: Column(
-                    crossAxisAlignment:
-                    isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                    crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                     children: [
                       if (index == 0 || messages[index - 1]['sender'] != message['sender'])
                         Padding(
@@ -90,33 +163,31 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                           style: TextStyle(color: isUser ? Colors.white : Colors.black),
                         ),
                       ),
-                      if (message.containsKey('options'))
-                        Wrap(
-                          spacing: 8.0,
-                          runSpacing: 10.0,
-                          children: (message['options'] as List<String>).map((option) {
-                            final isSelected = option == selectedOption;
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedOption = option;
-                                });
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                                decoration: BoxDecoration(
-                                  color: isSelected ? Colors.blue : Colors.blue[100],
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  option,
-                                  style: TextStyle(
-                                    color: isSelected ? Colors.white : Colors.blue,
+                      if (message.containsKey('options') && message['options'] != null)
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child: Wrap(
+                            spacing: 8.0,
+                            runSpacing: 10.0,
+                            children: (message['options'] as List<String>).map((option) {
+                              return GestureDetector(
+                                onTap: () {
+                                  sendMessage(option); // Send selected option as input
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue[100],
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    option,
+                                    style: TextStyle(color: Colors.blue),
                                   ),
                                 ),
-                              ),
-                            );
-                          }).toList(),
+                              );
+                            }).toList(),
+                          ),
                         ),
                     ],
                   ),
@@ -124,12 +195,28 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               },
             ),
           ),
+          if (showPdfPrompt)
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  Text("Would you like a PDF summary of this chat?"),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Implement PDF generation logic
+                    },
+                    child: Text("Generate PDF"),
+                  ),
+                ],
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
+                    controller: messageController,
                     decoration: InputDecoration(
                       hintText: "Type a message...",
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
@@ -139,8 +226,11 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 ),
                 SizedBox(width: 10),
                 IconButton(
-                  icon: Icon(Icons.mic, color: Colors.blue),
-                  onPressed: () {},
+                  icon: Icon(Icons.send, color: Colors.blue),
+                  onPressed: () {
+                    sendMessage(messageController.text);
+                    messageController.clear();
+                  },
                 ),
               ],
             ),
