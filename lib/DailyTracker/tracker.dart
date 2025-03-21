@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'symptoms_screen.dart';
 
 class DailyTrackerScreen extends StatefulWidget {
   @override
@@ -47,16 +48,30 @@ class _DailyTrackerScreenState extends State<DailyTrackerScreen> {
               ],
             ),
             SizedBox(height: 10),
-            Row(
-              children: [
-                Icon(Icons.add_circle_outline, color: Colors.blue),
-                SizedBox(width: 8),
-                Text("Symptoms",
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue)),
-              ],
+            GestureDetector(
+              onTap: () async {
+                final selectedSymptom = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SymptomsScreen()),
+                );
+
+                if (selectedSymptom != null) {
+                  setState(() {
+                    print("Selected Symptom: $selectedSymptom");
+                  });
+                }
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.add_circle_outline, color: Colors.blue),
+                  SizedBox(width: 8),
+                  Text("Symptoms",
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue)),
+                ],
+              ),
             ),
             SizedBox(height: 20),
             Container(
