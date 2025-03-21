@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import '../DailyTracker/tracker.dart';
 import '../Chatbot/chatbot.dart';
 import '../Spotter/spotter.dart';
-import '../Profile/home.dart';
+import '../Home/home.dart';
 import '../components/header.dart';
 import '../components/footer.dart';
+import '../Profile/profile.dart';
 
 class MainLayout extends StatefulWidget {
   @override
@@ -15,10 +16,11 @@ class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
+    CareEaseHomePage(),
     DailyTrackerScreen(),
     ChatbotScreen(),
     SpotterScreen(),
-    CareEaseHomePage(),
+    ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -30,10 +32,10 @@ class _MainLayoutState extends State<MainLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[100],
 
-      // ✅ Use the extracted Header
-      appBar: Header(),
+      // Updated Header with current index
+      appBar: Header(currentIndex: _selectedIndex),
 
       // ✅ Dynamic Content
       body: _screens[_selectedIndex],

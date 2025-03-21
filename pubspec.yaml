@@ -63,6 +63,7 @@ flutter:
   assets:
     - assets/CareEase_logo.png
     - assets/vhack_profile.jpg
+    - assets/vhack_smartwatch.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

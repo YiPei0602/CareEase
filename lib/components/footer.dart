@@ -1,27 +1,41 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Footer extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
 
-  Footer({required this.selectedIndex, required this.onItemTapped});
+  const Footer({Key? key, required this.selectedIndex, required this.onItemTapped}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
+    return CupertinoTabBar(
       currentIndex: selectedIndex,
       onTap: onItemTapped,
-      backgroundColor: Colors.blue,
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white70,
-      type: BottomNavigationBarType.fixed,
-      items: [
+      activeColor: Colors.blue,
+      inactiveColor: Colors.grey,
+      backgroundColor: Colors.white,
+      items: const [
         BottomNavigationBarItem(
-            icon: Icon(Icons.track_changes), label: "Daily Tracker"),
-        BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Chatbot"),
+          icon: Icon(CupertinoIcons.home),
+          label: "Home",
+        ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.search), label: "Disease Spotter"),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          icon: Icon(CupertinoIcons.chart_bar),
+          label: "Daily Tracker",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(CupertinoIcons.chat_bubble_2),
+          label: "Chatbot",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(CupertinoIcons.search),
+          label: "Disease Spotter",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(CupertinoIcons.person),
+          label: "Profile",
+        ),
       ],
     );
   }
