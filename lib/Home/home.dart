@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'medical_history.dart'; // Import the medical history page
+import 'sync.dart';
+
 
 // Main Home Page
 class CareEaseHomePage extends StatefulWidget {
@@ -154,76 +156,82 @@ class _CareEaseHomePageState extends State<CareEaseHomePage> {
               // ------------------------------------------------
               // 3) INTEGRATED WEARABLES FUNCTION (Modern Design)
               // ------------------------------------------------
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                // Slightly lighter black background (not grey)
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2A2A2A),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    // Smartwatch image (same size as the 65% ring: 60x60)
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        image: const DecorationImage(
-                          image: AssetImage('assets/vhack_smartwatch.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    // Content text aligned with "Today's Habit Goals"
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "SmartWatch Sync",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            "Connect your watch for health tracking",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white70,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Orange right arrow icon instead of a Connect button
-                    IconButton(
-                      onPressed: () {
-                        // TODO: Implement wearable connection functionality
-                      },
-                      icon: const Icon(
-                        CupertinoIcons.right_chevron,
-                        color: Colors.orange,
-                        size: 28,
-                      ),
-                    ),
-                  ],
-                ),
+             
+            // Integrated Wearables Function (Modern Design)
+Container(
+  width: double.infinity,
+  padding: const EdgeInsets.all(16),
+  // Slightly lighter black background (not grey)
+  decoration: BoxDecoration(
+    color: const Color(0xFF2A2A2A),
+    borderRadius: BorderRadius.circular(16),
+    boxShadow: const [
+      BoxShadow(
+        color: Colors.black12,
+        blurRadius: 4,
+        offset: Offset(0, 2),
+      ),
+    ],
+  ),
+  child: Row(
+    children: [
+      // Smartwatch image (same size as the 65% ring: 60x60)
+      Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          image: const DecorationImage(
+            image: AssetImage('assets/vhack_smartwatch.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+      const SizedBox(width: 16),
+      // Content text aligned with "Today's Habit Goals"
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text(
+              "SmartWatch Sync",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
+            ),
+            SizedBox(height: 4),
+            Text(
+              "Connect your watch for health tracking in real time.",
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white70,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+      // Orange right arrow icon; on tap, push the SyncPage.
+      IconButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SyncPage()),
+          );
+        },
+        icon: const Icon(
+          CupertinoIcons.right_chevron,
+          color: Colors.orange,
+          size: 28,
+        ),
+      ),
+    ],
+  ),
+),
+
 
               const SizedBox(height: 24),
 
