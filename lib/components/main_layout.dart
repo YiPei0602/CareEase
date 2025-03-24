@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../DailyTracker/tracker.dart';
 import '../Chatbot/chatbot.dart';
-import '../Spotter/spotter.dart';
+import '../Spotter/index.dart';
 import '../Home/home.dart';
 import '../components/header.dart';
 import '../components/footer.dart';
