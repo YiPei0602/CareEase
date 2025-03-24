@@ -218,7 +218,7 @@ class _InfectiousDiseaseTrackerState extends State<InfectiousDiseaseTracker> {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.9),
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
