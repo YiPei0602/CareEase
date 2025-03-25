@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'medical_history.dart'; // Import the medical history page
 import 'sync.dart';
-
+import 'gamification.dart'; // Import the gamification page
 
 // Main Home Page
 class CareEaseHomePage extends StatefulWidget {
@@ -80,12 +80,93 @@ class _CareEaseHomePageState extends State<CareEaseHomePage> {
 
               // ------------------------------------------------
               // 2) ONGOING HABIT TASK (Circle Percentage)
+              // When tapped, navigates to the Gamification Page.
+              // ------------------------------------------------
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const GamificationPage(),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      // Circular Percentage
+                      CustomPaint(
+                        foregroundPainter: _CircleProgressPainter(
+                          progress: 0.65, // 65% done
+                          progressColor: Colors.blueAccent,
+                        ),
+                        child: const SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: Center(
+                            child: Text(
+                              "65%",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Habit details
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Today's Habit Goals",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "Keep going! You're 65% done today's tasks.",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.arrow_forward_ios, size: 16),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // ------------------------------------------------
+              // 3) INTEGRATED WEARABLES FUNCTION (Modern Design)
               // ------------------------------------------------
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.blue[50],
+                  color: const Color(0xFF2A2A2A),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: const [
                     BoxShadow(
@@ -97,141 +178,62 @@ class _CareEaseHomePageState extends State<CareEaseHomePage> {
                 ),
                 child: Row(
                   children: [
-                    // Circular Percentage
-                    CustomPaint(
-                      foregroundPainter: _CircleProgressPainter(
-                        progress: 0.65, // 65% done
-                        progressColor: Colors.blueAccent,
-                      ),
-                      child: const SizedBox(
-                        width: 60,
-                        height: 60,
-                        child: Center(
-                          child: Text(
-                            "65%",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
+                    // Smartwatch image
+                    Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        image: const DecorationImage(
+                          image: AssetImage('assets/vhack_smartwatch.png'),
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
                     const SizedBox(width: 16),
-                    // Habit details
+                    // Content text
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Today's Habit Goals",
+                        children: const [
+                          Text(
+                            "SmartWatch Sync",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
-                            "Keep going! You're 65% done today's tasks.",
+                            "Connect your watch for health tracking in real time.",
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey[700],
+                              color: Colors.white70,
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
                     ),
+                    // Orange right arrow icon; on tap, push the SyncPage.
                     IconButton(
                       onPressed: () {
-                        // TODO: Navigate to habit detail
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SyncPage()),
+                        );
                       },
-                      icon: const Icon(Icons.arrow_forward_ios, size: 16),
+                      icon: const Icon(
+                        CupertinoIcons.right_chevron,
+                        color: Colors.orange,
+                        size: 28,
+                      ),
                     ),
                   ],
                 ),
               ),
-
-              const SizedBox(height: 24),
-
-              // ------------------------------------------------
-              // 3) INTEGRATED WEARABLES FUNCTION (Modern Design)
-              // ------------------------------------------------
-             
-            // Integrated Wearables Function (Modern Design)
-Container(
-  width: double.infinity,
-  padding: const EdgeInsets.all(16),
-  // Slightly lighter black background (not grey)
-  decoration: BoxDecoration(
-    color: const Color(0xFF2A2A2A),
-    borderRadius: BorderRadius.circular(16),
-    boxShadow: const [
-      BoxShadow(
-        color: Colors.black12,
-        blurRadius: 4,
-        offset: Offset(0, 2),
-      ),
-    ],
-  ),
-  child: Row(
-    children: [
-      // Smartwatch image (same size as the 65% ring: 60x60)
-      Container(
-        width: 60,
-        height: 60,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          image: const DecorationImage(
-            image: AssetImage('assets/vhack_smartwatch.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-      const SizedBox(width: 16),
-      // Content text aligned with "Today's Habit Goals"
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
-              "SmartWatch Sync",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(height: 4),
-            Text(
-              "Connect your watch for health tracking in real time.",
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white70,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-      // Orange right arrow icon; on tap, push the SyncPage.
-      IconButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SyncPage()),
-          );
-        },
-        icon: const Icon(
-          CupertinoIcons.right_chevron,
-          color: Colors.orange,
-          size: 28,
-        ),
-      ),
-    ],
-  ),
-),
-
 
               const SizedBox(height: 24),
 
