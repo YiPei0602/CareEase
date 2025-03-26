@@ -67,7 +67,7 @@ flutter:
     - assets/CareEase_logo.png
     - assets/vhack_profile.jpg
     - assets/vhack_smartwatch.png
-    - assets/female_dynamic_pose.glb
+    - assets/female_dynamic_pose.glb 
     - assets/drunk_idle_variation.glb
     - assets/jogging.glb
     - assets/victory.glb
