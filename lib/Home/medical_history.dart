@@ -249,214 +249,221 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
   Widget _buildExpandedDetails(String condition) {
     final controllers = _detailControllers[condition]!;
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.05),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(12),
-          bottomRight: Radius.circular(12),
+    // Special case for "Allergy"
+    if (condition == "Allergy") {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTextField(
+              controllers["type"]!,
+              label: "Type of allergy",
+              hint: "e.g., Food, Medication, Seasonal",
+            ),
+            const SizedBox(height: 12),
+            _buildTextField(
+              controllers["duration"]!,
+              label: "How long have you had it?",
+              hint: "e.g., Since childhood, 5 years",
+            ),
+            const SizedBox(height: 12),
+            _buildTextField(
+              controllers["severity"]!,
+              label: "Severity",
+              hint: "e.g., Mild, Moderate, Severe",
+            ),
+          ],
         ),
-      ),
+      );
+    }
+
+    // Special case for "Asthma"
+    if (condition == "Asthma") {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTextField(
+              controllers["diagnosed"]!,
+              label: "When were you diagnosed?",
+              hint: "e.g., 2010, Childhood",
+            ),
+            const SizedBox(height: 12),
+            _buildTextField(
+              controllers["medications"]!,
+              label: "Current medications",
+              hint: "e.g., Albuterol, Advair",
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Generic form for other conditions
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Additional Details for $condition:",
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          _buildTextField(
+            controllers["diagnosisYear"]!,
+            label: "Year Diagnosed",
+            hint: "e.g., 2015",
+            keyboardType: TextInputType.number,
           ),
-          const SizedBox(height: 8),
-
-          // Allergy
-          if (condition == "Allergy") ...[
-            _buildDetailTextField(
-              controllers["type"]!,
-              "What type of allergy?",
-            ),
-            const SizedBox(height: 8),
-            _buildDetailTextField(
-              controllers["duration"]!,
-              "How long? (years)",
-            ),
-            const SizedBox(height: 8),
-            _buildDetailTextField(
-              controllers["severity"]!,
-              "Severity? (mild, moderate, severe)",
-            ),
-          ]
-          // Asthma
-          else if (condition == "Asthma") ...[
-            _buildDetailTextField(
-              controllers["diagnosed"]!,
-              "When diagnosed?",
-            ),
-            const SizedBox(height: 8),
-            _buildDetailTextField(
-              controllers["medications"]!,
-              "Current medications?",
-            ),
-          ]
-          // Others & Generic Conditions
-          else ...[
-            _buildDetailTextField(
-              controllers["diagnosisYear"]!,
-              "Year of Diagnosis?",
-            ),
-            const SizedBox(height: 8),
-            _buildDetailTextField(
-              controllers["notes"]!,
-              "Additional Notes",
-            ),
-          ],
+          const SizedBox(height: 12),
+          _buildTextField(
+            controllers["notes"]!,
+            label: "Additional Notes",
+            hint: "Any additional information",
+            maxLines: 3,
+          ),
         ],
       ),
     );
   }
 
-  // A helper text field for the expanded details
-  Widget _buildDetailTextField(
-    TextEditingController controller,
-    String placeholder,
-  ) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: placeholder,
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+  // Helper to build consistent text fields
+  Widget _buildTextField(
+    TextEditingController controller, {
+    required String label,
+    required String hint,
+    TextInputType? keyboardType,
+    int maxLines = 1,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
         ),
+<<<<<<<< HEAD:frontend/lib/Profile/medical_history.dart
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
+========
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          maxLines: maxLines,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+            filled: true,
+            fillColor: Colors.grey[50],
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.blue),
+            ),
+          ),
+        ),
+      ],
+>>>>>>>> cba9cc37936ad0ec42f9267836cd1acc3497c02b:lib/Home/medical_history.dart
     );
   }
 
-  // If user toggles "Others", show bottom sheet
+  // Bottom sheet for "Others" to specify custom condition
   void _showCustomConditionBottomSheet() {
-    final customCtrl = TextEditingController();
+    final controller = TextEditingController();
 
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // allow full-height
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Specify Condition",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: "Enter your condition...",
+                  filled: true,
+                  fillColor: Colors.grey[50],
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    // Here you would add the custom condition to your data
+                  },
+                  child: const Text(
+                    "Save",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      builder: (ctx) {
-        final mediaQuery = MediaQuery.of(ctx);
-        return DraggableScrollableSheet(
-          expand: false,
-          initialChildSize: 0.4,
-          maxChildSize: 0.8,
-          builder: (context, scrollController) {
-            return Container(
-              height: mediaQuery.size.height * 0.6,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-              child: Column(
-                children: [
-                  const Text(
-                    "Others Condition",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: customCtrl,
-                    autofocus: true,
-                    decoration: InputDecoration(
-                      hintText: "Enter your condition",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        final value = customCtrl.text.trim();
-                        if (value.isNotEmpty) {
-                          setState(() {
-                            final idx = _conditions.indexOf("Others");
-                            // Insert new condition right before "Others"
-                            _conditions.insert(idx, value);
-                            _selected[value] = true;
-                            _expanded[value] = true;
-
-                            // Initialize a default set of controllers for this new condition
-                            _detailControllers[value] = {
-                              "diagnosisYear": TextEditingController(),
-                              "notes": TextEditingController(),
-                            };
-                          });
-                        }
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 15,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: const Text(
-                        "Save",
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
     );
   }
 
-  // Show a more iOS-like "Success!" dialog and then go back to CareEaseHomePage with a slide-from-left transition
+  // DUMMY IMPLEMENTATION of save function
   void _saveMedicalHistory() {
-    // Save data if needed, then show the success dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false, // user can't dismiss by tapping outside
-      builder: (BuildContext context) {
-        // Show the dialog and schedule the navigation
-        Future.delayed(const Duration(seconds: 1), () {
-          // Close the dialog
-          Navigator.of(context).pop();
-          // Push the CareEaseHomePage with a custom slide-from-left transition,
-          // removing all previous routes.
-          Navigator.of(context).pushAndRemoveUntil(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  const CareEaseHomePage(),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                const begin = Offset(-1.0, 0.0); // slide in from left
-                const end = Offset.zero;
-                final tween = Tween(begin: begin, end: end)
-                    .chain(CurveTween(curve: Curves.easeInOut));
-                return SlideTransition(
-                  position: animation.drive(tween),
-                  child: child,
-                );
-              },
-            ),
-            (route) => false,
-          );
-        });
+    // Create a map of all selected conditions and their details
+    final Map<String, Map<String, String>> data = {};
 
+<<<<<<<< HEAD:frontend/lib/Profile/medical_history.dart
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -494,6 +501,35 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
           ),
         );
       },
+========
+    for (final condition in _conditions) {
+      if (_selected[condition] == true) {
+        final detailMap = <String, String>{};
+        final controllers = _detailControllers[condition]!;
+
+        for (final entry in controllers.entries) {
+          detailMap[entry.key] = entry.value.text;
+        }
+
+        data[condition] = detailMap;
+      }
+    }
+
+    // TODO: Save this data to your backend or local storage
+    print("Saving medical history data: $data");
+
+    // Show success message and navigate back
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Medical information saved successfully!"),
+        backgroundColor: Colors.green,
+      ),
+>>>>>>>> cba9cc37936ad0ec42f9267836cd1acc3497c02b:lib/Home/medical_history.dart
     );
+
+    // Navigate back to home screen after short delay
+    Future.delayed(const Duration(seconds: 1), () {
+      Navigator.pop(context);
+    });
   }
 }

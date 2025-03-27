@@ -69,7 +69,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   children: [
                     const SizedBox(height: 200),
                     Image.asset(
-                      '../assets/CareEase_logo.png',
+                      'assets/CareEase_logo.png',
                       width: 200,
                     ),
                     const SizedBox(height: 40),
