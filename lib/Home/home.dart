@@ -573,7 +573,9 @@ class _CareEaseHomePageState extends State<CareEaseHomePage> {
 
     // For Blood: use CupertinoAlertDialog with text input.
     if (title == "Blood") {
-      TextEditingController controller = TextEditingController(text: current);
+      // Updated controller initialization: if current is "type", set to empty.
+      TextEditingController controller =
+          TextEditingController(text: current == "type" ? "" : current);
       showCupertinoDialog(
         context: context,
         builder: (context) => CupertinoAlertDialog(
@@ -582,7 +584,7 @@ class _CareEaseHomePageState extends State<CareEaseHomePage> {
             padding: const EdgeInsets.only(top: 8.0),
             child: CupertinoTextField(
               controller: controller,
-              placeholder: "e.g. A+, O-, etc.",
+              placeholder: "e.g. A, B, AB, O, etc.",
             ),
           ),
           actions: [
