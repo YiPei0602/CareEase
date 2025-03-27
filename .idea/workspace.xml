@@ -6,14 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="951adee8-c57f-4339-9fa4-33867d2b9fe0" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/../125/.idea/125.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/Home/gamification.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/Home/home.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/Home/medical_history.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/Home/sync.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../125/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../125/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/CareEase.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/CareEase.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Home/gamification.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Home/home.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Home/medical_history.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Home/sync.dart" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../G4D Team/GitHub4Dummies" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../GitHub4Dummies-main/G4D Meeting Minutes.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../GitHub4Dummies-main/G4D Workshop Preparation.txt" beforeDir="false" />
@@ -710,14 +709,20 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ScreenRecorder.SavePath": "C:\\Users\\User\\Downloads\\device-2025-03-27-153844.webm",
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
     "io.flutter.reload.alreadyRun": "true",
-    "last_opened_file_path": "C:/Users/User/Documents/CareEase",
+    "last_opened_file_path": "C:/Users/User/Downloads",
     "settings.editor.selected.configurable": "dart.settings",
     "show.migrate.to.gradle.popup": "false"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\User\Documents\CareEase\frontend\lib" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
       <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />

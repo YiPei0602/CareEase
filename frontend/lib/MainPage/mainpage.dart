@@ -110,7 +110,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const MainLayout(),
+                            builder: (context) => MainLayout(),
                           ),
                         );
                       },

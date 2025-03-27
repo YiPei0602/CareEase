@@ -201,8 +201,7 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
   }
 
   // Build each condition row with a trailing checkmark
-  Widget _buildConditionItem(
-      String condition, bool isSelected, bool isExpanded) {
+  Widget _buildConditionItem(String condition, bool isSelected, bool isExpanded) {
     final isOthers = condition == "Others";
 
     return Container(
@@ -327,12 +326,12 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
 
   // Helper to build consistent text fields
   Widget _buildTextField(
-    TextEditingController controller, {
-    required String label,
-    required String hint,
-    TextInputType? keyboardType,
-    int maxLines = 1,
-  }) {
+      TextEditingController controller, {
+        required String label,
+        required String hint,
+        TextInputType? keyboardType,
+        int maxLines = 1,
+      }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -343,11 +342,6 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
             fontWeight: FontWeight.w600,
           ),
         ),
-<<<<<<<< HEAD:frontend/lib/Profile/medical_history.dart
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      ),
-========
         const SizedBox(height: 6),
         TextField(
           controller: controller,
@@ -377,7 +371,6 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
           ),
         ),
       ],
->>>>>>>> cba9cc37936ad0ec42f9267836cd1acc3497c02b:lib/Home/medical_history.dart
     );
   }
 
@@ -463,45 +456,6 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
     // Create a map of all selected conditions and their details
     final Map<String, Map<String, String>> data = {};
 
-<<<<<<<< HEAD:frontend/lib/Profile/medical_history.dart
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Container(
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            child: const Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Big success icon
-                Icon(
-                  Icons.check_circle,
-                  color: Colors.green,
-                  size: 64,
-                ),
-                SizedBox(height: 16),
-                // Title
-                Text(
-                  "Success!",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8),
-                // Message
-                Text(
-                  "Your medical history has been updated successfully.",
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 24),
-              ],
-            ),
-          ),
-        );
-      },
-========
     for (final condition in _conditions) {
       if (_selected[condition] == true) {
         final detailMap = <String, String>{};
@@ -524,7 +478,6 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
         content: Text("Medical information saved successfully!"),
         backgroundColor: Colors.green,
       ),
->>>>>>>> cba9cc37936ad0ec42f9267836cd1acc3497c02b:lib/Home/medical_history.dart
     );
 
     // Navigate back to home screen after short delay
