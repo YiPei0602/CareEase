@@ -33,8 +33,6 @@ dependencies:
   cupertino_icons: ^1.0.6
   table_calendar: ^3.2.0
   animate_do: ^4.2.0
-  google_maps_flutter: ^2.7.0
-  location: ^5.0.3
   model_viewer_plus: ^1.9.0
   webview_flutter: ^4.2.2
   webview_flutter_android: ^3.9.3
