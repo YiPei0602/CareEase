@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'components/main_layout.dart'; // Import MainLayout
 import 'MainPage/mainpage.dart';
 
 void main() {
