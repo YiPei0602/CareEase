@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 class GamificationPage extends StatefulWidget {
-  const GamificationPage({Key? key}) : super(key: key);
+  const GamificationPage({super.key});
 
   @override
   State<GamificationPage> createState() => _GamificationPageState();
@@ -40,9 +40,11 @@ class _GamificationPageState extends State<GamificationPage>
   // Called whenever a task is toggled.
   void updateProgress() {
     final int completed = tasks.where((task) => task).length;
-    final double newProgress = completed / tasks.length; // 0, 0.25, 0.5, 0.75, 1.0
+    final double newProgress =
+        completed / tasks.length; // 0, 0.25, 0.5, 0.75, 1.0
 
-    print("Debug: tasks completed = $completed / ${tasks.length}, newProgress = $newProgress");
+    print(
+        "Debug: tasks completed = $completed / ${tasks.length}, newProgress = $newProgress");
 
     setState(() {
       progress = newProgress;
@@ -80,10 +82,12 @@ class _GamificationPageState extends State<GamificationPage>
     final int completed = tasks.where((task) => task).length;
     // Only two characters: readyplayer when 0%, and female_dynamic_pose for 25% or more.
     if (completed >= 1) {
-      print("Debug: completed=$completed => using avatar path: assets/female_dynamic_pose.glb");
+      print(
+          "Debug: completed=$completed => using avatar path: assets/female_dynamic_pose.glb");
       return 'assets/female_dynamic_pose.glb';
     } else {
-      print("Debug: completed=$completed => using avatar path: https://models.readyplayer.me/67e2ae8ad4ed851a615b1e4f.glb");
+      print(
+          "Debug: completed=$completed => using avatar path: https://models.readyplayer.me/67e2ae8ad4ed851a615b1e4f.glb");
       return 'https://models.readyplayer.me/67e2ae8ad4ed851a615b1e4f.glb';
     }
   }
@@ -139,7 +143,8 @@ class _GamificationPageState extends State<GamificationPage>
                       builder: (context, child) {
                         return Container(
                           height: 20,
-                          width: constraints.maxWidth * _progressAnimation.value,
+                          width:
+                              constraints.maxWidth * _progressAnimation.value,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             gradient: const LinearGradient(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 
 class SymptomsScreen extends StatefulWidget {
+  const SymptomsScreen({super.key});
+
   @override
   _SymptomsScreenState createState() => _SymptomsScreenState();
 }
@@ -43,12 +45,13 @@ class _SymptomsScreenState extends State<SymptomsScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: Text("Select Symptoms", style: TextStyle(color: Colors.black)),
+        title: const Text("Select Symptoms",
+            style: TextStyle(color: Colors.black)),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -57,7 +60,7 @@ class _SymptomsScreenState extends State<SymptomsScreen> {
             onPressed: () {
               Navigator.pop(context, selectedSymptoms);
             },
-            child: Text("Confirm", style: TextStyle(color: Colors.blue)),
+            child: const Text("Confirm", style: TextStyle(color: Colors.blue)),
           )
         ],
       ),
@@ -67,29 +70,29 @@ class _SymptomsScreenState extends State<SymptomsScreen> {
           children: [
             ...symptoms.entries.map((entry) {
               return FadeInUp(
-                duration: Duration(milliseconds: 400),
+                duration: const Duration(milliseconds: 400),
                 child: Card(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
                   elevation: 3,
-                  margin: EdgeInsets.only(bottom: 20),
+                  margin: const EdgeInsets.only(bottom: 20),
                   child: Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
                             Icon(categoryIcons[entry.key], color: Colors.blue),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Text(
                               entry.key.toUpperCase(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                           ],
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         ...entry.value.map((symptom) => CheckboxListTile(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -112,22 +115,22 @@ class _SymptomsScreenState extends State<SymptomsScreen> {
                   ),
                 ),
               );
-            }).toList(),
+            }),
 
             // Others section
             FadeInUp(
-              duration: Duration(milliseconds: 400),
+              duration: const Duration(milliseconds: 400),
               child: Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 elevation: 3,
-                margin: EdgeInsets.only(bottom: 20),
+                margin: const EdgeInsets.only(bottom: 20),
                 child: Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      const Row(
                         children: [
                           Icon(Icons.add, color: Colors.blue),
                           SizedBox(width: 10),
@@ -138,13 +141,14 @@ class _SymptomsScreenState extends State<SymptomsScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       TextField(
                         controller: otherSymptomController,
                         decoration: InputDecoration(
                           hintText: "Enter other symptom...",
                           suffixIcon: IconButton(
-                            icon: Icon(Icons.add_circle, color: Colors.blue),
+                            icon: const Icon(Icons.add_circle,
+                                color: Colors.blue),
                             onPressed: _addOtherSymptom,
                           ),
                           border: OutlineInputBorder(
@@ -152,7 +156,7 @@ class _SymptomsScreenState extends State<SymptomsScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       // Display other symptoms as checkboxes
                       ...otherSymptoms.map((symptom) => CheckboxListTile(
                             title: Text(symptom),

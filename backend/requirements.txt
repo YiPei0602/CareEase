@@ -1,0 +1,8 @@
+fastapi
+uvicornw
+spacy
+scikit-learn
+pyyaml
+joblib
+pydantic
+python-dotenv

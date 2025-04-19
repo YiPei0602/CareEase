@@ -1,0 +1,11 @@
+fever_flu:
+  - fever
+  - headache
+
+stomach_virus:
+  - nausea
+  - stomach pain
+
+covid_like:
+  - fever
+  - fatigue

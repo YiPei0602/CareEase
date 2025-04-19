@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Import the home page you want to navigate to
-import 'home.dart'; // <-- Ensure this import matches your file structure
+// <-- Ensure this import matches your file structure
 
 class MedicalHistoryPage extends StatefulWidget {
   final String recordType;
@@ -201,7 +201,8 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
   }
 
   // Build each condition row with a trailing checkmark
-  Widget _buildConditionItem(String condition, bool isSelected, bool isExpanded) {
+  Widget _buildConditionItem(
+      String condition, bool isSelected, bool isExpanded) {
     final isOthers = condition == "Others";
 
     return Container(
@@ -326,12 +327,12 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
 
   // Helper to build consistent text fields
   Widget _buildTextField(
-      TextEditingController controller, {
-        required String label,
-        required String hint,
-        TextInputType? keyboardType,
-        int maxLines = 1,
-      }) {
+    TextEditingController controller, {
+    required String label,
+    required String hint,
+    TextInputType? keyboardType,
+    int maxLines = 1,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

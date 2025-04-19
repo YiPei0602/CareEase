@@ -36,16 +36,16 @@ class _CareEaseHomePageState extends State<CareEaseHomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Profile picture and greeting text
-                  Row(
+                  const Row(
                     children: [
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 35, // Updated radius from 24 to 35
                         backgroundImage: AssetImage('assets/vhack_profile.jpg'),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
                             "Hello, Lucas 👋",
                             style: TextStyle(
@@ -192,10 +192,10 @@ class _CareEaseHomePageState extends State<CareEaseHomePage> {
                     ),
                     const SizedBox(width: 16),
                     // Content text
-                    Expanded(
+                    const Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
                             "SmartWatch Sync",
                             style: TextStyle(
@@ -222,7 +222,8 @@ class _CareEaseHomePageState extends State<CareEaseHomePage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const SyncPage()),
+                          MaterialPageRoute(
+                              builder: (context) => const SyncPage()),
                         );
                       },
                       icon: const Icon(
@@ -316,10 +317,10 @@ class _CareEaseHomePageState extends State<CareEaseHomePage> {
               // ------------------------------------------------
               // 5) NEW SECTION: HEALTH RECORDS
               // ------------------------------------------------
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
-                  children: const [
+                  children: [
                     Text(
                       "Health Records",
                       style: TextStyle(
@@ -608,8 +609,8 @@ class _CareEaseHomePageState extends State<CareEaseHomePage> {
     // For Height & Weight: use CupertinoAlertDialog.
     if (title == "Height" || title == "Weight") {
       String defaultVal = title == "Height" ? "cm" : "kg";
-      TextEditingController controller = TextEditingController(
-          text: current == defaultVal ? "" : current);
+      TextEditingController controller =
+          TextEditingController(text: current == defaultVal ? "" : current);
       showCupertinoDialog(
         context: context,
         builder: (context) => CupertinoAlertDialog(
@@ -632,9 +633,13 @@ class _CareEaseHomePageState extends State<CareEaseHomePage> {
               onPressed: () {
                 setState(() {
                   if (title == "Height") {
-                    _height = controller.text.trim().isEmpty ? defaultVal : controller.text.trim();
+                    _height = controller.text.trim().isEmpty
+                        ? defaultVal
+                        : controller.text.trim();
                   } else {
-                    _weight = controller.text.trim().isEmpty ? defaultVal : controller.text.trim();
+                    _weight = controller.text.trim().isEmpty
+                        ? defaultVal
+                        : controller.text.trim();
                   }
                 });
                 Navigator.pop(context);

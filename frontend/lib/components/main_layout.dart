@@ -8,6 +8,8 @@ import '../components/footer.dart';
 import '../Profile/profile.dart';
 
 class MainLayout extends StatefulWidget {
+  const MainLayout({super.key});
+
   @override
   _MainLayoutState createState() => _MainLayoutState();
 }
@@ -16,11 +18,11 @@ class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    CareEaseHomePage(),
+    const CareEaseHomePage(),
     DailyTrackerScreen(),
     ChatbotScreen(),
-    SpotterScreen(),
-    ProfileScreen(),
+    const SpotterScreen(),
+    const ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {

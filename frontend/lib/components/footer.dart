@@ -5,7 +5,8 @@ class Footer extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
 
-  const Footer({Key? key, required this.selectedIndex, required this.onItemTapped}) : super(key: key);
+  const Footer(
+      {super.key, required this.selectedIndex, required this.onItemTapped});
 
   @override
   Widget build(BuildContext context) {

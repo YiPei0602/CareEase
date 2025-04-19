@@ -12,7 +12,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   // Store current language; default is English
   String _currentLanguage = "English";
-  
+
   // Update the language
   void _updateLanguage(String language) {
     setState(() {
@@ -51,8 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       const CircleAvatar(
                         radius: 35,
-                        backgroundImage:
-                            AssetImage('assets/vhack_profile.jpg'),
+                        backgroundImage: AssetImage('assets/vhack_profile.jpg'),
                       ),
                       const SizedBox(width: 16),
                       // User Details
@@ -137,8 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   child: const Text(
                     "My Settings",
-                    style: TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -207,8 +205,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // SECURITY ALERT WITH BLUE BACKGROUND
                 // ------------------------------------------------
                 Container(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 24),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.blue,
@@ -221,15 +219,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ],
                   ),
-                  child: Row(
+                  child: const Row(
                     children: [
-                      const Icon(Icons.security, color: Colors.white),
-                      const SizedBox(width: 8),
-                      const Expanded(
+                      Icon(Icons.security, color: Colors.white),
+                      SizedBox(width: 8),
+                      Expanded(
                         child: Text(
                           "Your data is securely encrypted and protected according to industry standards.",
-                          style: TextStyle(
-                              fontSize: 13, color: Colors.white),
+                          style: TextStyle(fontSize: 13, color: Colors.white),
                         ),
                       ),
                     ],

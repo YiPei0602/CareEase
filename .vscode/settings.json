@@ -1,3 +1,5 @@
 {
-    "cmake.sourceDirectory": "/Users/tanyipei/Desktop/CareEase/windows"
+    "cmake.sourceDirectory": "/Users/tanyipei/Desktop/CareEase/windows",
+    "python.pythonPath": "venv\\Scripts\\python.exe",
+    "python.analysis.typeEvaluation.deprecateTypingAliases": false
 }
