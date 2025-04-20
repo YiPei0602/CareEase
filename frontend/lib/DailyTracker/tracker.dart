@@ -54,7 +54,8 @@ class _DailyTrackerScreenState extends State<DailyTrackerScreen> {
               onTap: () async {
                 final selectedSymptom = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SymptomsScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const SymptomsScreen()),
                 );
 
                 if (selectedSymptom != null) {

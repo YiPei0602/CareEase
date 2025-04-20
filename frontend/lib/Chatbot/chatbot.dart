@@ -111,14 +111,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              ChatHistoryScreen()), // Link to chat history page
+                              const ChatHistoryScreen()), // Link to chat history page
                     );
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.blue,
                     side: const BorderSide(color: Colors.blue),
                   ),
-                  child: Text("Chat History"),
+                  child: const Text("Chat History"),
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(

@@ -1,0 +1,44 @@
+# severity:
+#   - mild
+#   - moderate
+#   - severe
+#   - slight
+#   - intense
+
+# signs:
+#   - rash
+#   - swelling
+#   - inflammation
+#   - discoloration
+#   - high blood pressure
+#   - rapid heartbeat
+
+# history:
+#   - smoking
+#   - asthma
+#   - diabetes
+#   - heart disease
+#   - cancer
+#   - hypertension
+#   - surgery
+#   - pregnancy
+
+# medications:
+#   - insulin
+#   - aspirin
+#   - ibuprofen
+#   - metformin
+#   - antihistamines
+
+# allergies:
+#   - penicillin
+#   - peanuts
+#   - pollen
+#   - latex
+#   - seafood
+
+# biological_traits:
+#   - pregnant
+#   - breastfeeding
+#   - menopausal
+#   - immunocompromised

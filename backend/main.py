@@ -14,7 +14,7 @@ app.add_middleware(
 )
 
 # Mount chat router
-app.include_router(chat.router, prefix="/chat", tags=["Chat"])
+app.include_router(chat.router)
 
 @app.get("/")
 def root():

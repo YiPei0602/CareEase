@@ -1,11 +1,30 @@
-fever_flu:
-  - fever
-  - headache
+- disease: Flu
+  symptoms:
+    - cough
+    - fever
+    - sore throat
+  duration_range: [1, 7]
+  history: []
+  gender: any
+  age_group: [0, 100]
+  score_weights:
+    symptoms: 0.5
+    signs: 0.2
+    duration: 0.1
+    history: 0.1
+    demographics: 0.1
 
-stomach_virus:
-  - nausea
-  - stomach pain
-
-covid_like:
-  - fever
-  - fatigue
+- disease: Asthma
+  symptoms:
+    - wheezing
+    - shortness of breath
+  duration_range: [1, 999]
+  history:
+    - smoking
+  gender: any
+  age_group: [5, 80]
+  score_weights:
+    symptoms: 0.6
+    duration: 0.2
+    history: 0.1
+    demographics: 0.1

@@ -19,8 +19,8 @@ class _MainLayoutState extends State<MainLayout> {
 
   final List<Widget> _screens = [
     const CareEaseHomePage(),
-    DailyTrackerScreen(),
-    ChatbotScreen(),
+    const DailyTrackerScreen(),
+    const ChatbotScreen(),
     const SpotterScreen(),
     const ProfileScreen(),
   ];
