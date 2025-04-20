@@ -1,7 +1,20 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from did_streamer import router as did_router
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# ← insert this block here, immediately after `app = FastAPI()`
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Register the D-ID router
+app.include_router(did_router)
 
 # Fix: Ensure the field name matches Flutter's request
 class ChatRequest(BaseModel):
@@ -34,3 +47,4 @@ async def chat_endpoint(request: ChatRequest):
         return {"response": response}
 
     return {"response": "I'm here to help! Please describe your symptoms."}
+
