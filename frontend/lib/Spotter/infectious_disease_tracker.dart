@@ -4,10 +4,11 @@ import 'disease_report_form.dart'; // Ensure this file exists in your project
 
 // Main component for Infectious Disease Spotter module
 class InfectiousDiseaseTracker extends StatefulWidget {
-  const InfectiousDiseaseTracker({Key? key}) : super(key: key);
+  const InfectiousDiseaseTracker({super.key});
 
   @override
-  State<InfectiousDiseaseTracker> createState() => _InfectiousDiseaseTrackerState();
+  State<InfectiousDiseaseTracker> createState() =>
+      _InfectiousDiseaseTrackerState();
 }
 
 class _InfectiousDiseaseTrackerState extends State<InfectiousDiseaseTracker> {
@@ -15,7 +16,7 @@ class _InfectiousDiseaseTrackerState extends State<InfectiousDiseaseTracker> {
   bool _isUSMSearched = false;
   bool _isLoading = false;
   final List<DiseaseCase> _diseaseCases = [];
-  String _userName = "LUCAS";
+  final String _userName = "LUCAS";
 
   // Variables for custom map gestures (zoom & pan)
   double _scale = 1.0;
@@ -134,13 +135,14 @@ class _InfectiousDiseaseTrackerState extends State<InfectiousDiseaseTracker> {
                     hintStyle: TextStyle(color: Colors.grey[500]),
                     prefixIcon: const Icon(Icons.search, color: Colors.blue),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
                   ),
                 ),
               ),
             ),
             // Map Container with Interactive Gestures
-            Container(
+            SizedBox(
               height: MediaQuery.of(context).size.height * 0.4,
               child: Stack(
                 children: [
@@ -153,8 +155,10 @@ class _InfectiousDiseaseTrackerState extends State<InfectiousDiseaseTracker> {
                     },
                     onScaleUpdate: (details) {
                       setState(() {
-                        _scale = (_previousScale * details.scale).clamp(0.5, 3.0);
-                        _offset = _previousOffset + (details.focalPoint - _startFocalPoint);
+                        _scale =
+                            (_previousScale * details.scale).clamp(0.5, 3.0);
+                        _offset = _previousOffset +
+                            (details.focalPoint - _startFocalPoint);
                       });
                     },
                     onScaleEnd: (details) {
@@ -181,9 +185,9 @@ class _InfectiousDiseaseTrackerState extends State<InfectiousDiseaseTracker> {
                       color: Colors.transparent,
                       child: FloatingActionButton(
                         onPressed: () => _showReportForm(context),
-                        child: const Icon(Icons.add_circle_outline),
                         backgroundColor: Colors.blue,
                         elevation: 4,
+                        child: const Icon(Icons.add_circle_outline),
                       ),
                     ),
                   ),
@@ -193,7 +197,8 @@ class _InfectiousDiseaseTrackerState extends State<InfectiousDiseaseTracker> {
                       color: Colors.black.withOpacity(0.3),
                       child: const Center(
                         child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       ),
                     ),
@@ -259,14 +264,18 @@ class _InfectiousDiseaseTrackerState extends State<InfectiousDiseaseTracker> {
                     ),
                     _buildDiseaseCard(
                       'Influenza A',
-                      _isUSMSearched ? _getCasesByDisease('Influenza A').length : 0,
+                      _isUSMSearched
+                          ? _getCasesByDisease('Influenza A').length
+                          : 0,
                       _getRadiusForDisease('Influenza A'),
                       Colors.orange,
                       Icons.air,
                     ),
                     _buildDiseaseCard(
                       'COVID-19',
-                      _isUSMSearched ? _getCasesByDisease('COVID-19').length : 0,
+                      _isUSMSearched
+                          ? _getCasesByDisease('COVID-19').length
+                          : 0,
                       _getRadiusForDisease('COVID-19'),
                       Colors.purple,
                       Icons.coronavirus,
@@ -288,7 +297,8 @@ class _InfectiousDiseaseTrackerState extends State<InfectiousDiseaseTracker> {
     );
   }
 
-  Widget _buildDiseaseCard(String disease, int caseCount, int radius, Color color, IconData icon) {
+  Widget _buildDiseaseCard(
+      String disease, int caseCount, int radius, Color color, IconData icon) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -375,10 +385,10 @@ class CustomMapView extends StatelessWidget {
   final List<DiseaseCase> diseaseCases;
 
   const CustomMapView({
-    Key? key,
+    super.key,
     required this.isUSMVisible,
     required this.diseaseCases,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -452,9 +462,10 @@ class MapPainter extends CustomPainter {
       Offset(size.width * 0.5 + 40, size.height * 0.7),
     ];
     for (final pos in housePositions) {
-      canvas.drawRect(Rect.fromCenter(center: pos, width: 20, height: 20), housePaint);
+      canvas.drawRect(
+          Rect.fromCenter(center: pos, width: 20, height: 20), housePaint);
     }
-    
+
     if (isUSMVisible) {
       // Draw USM campus area (simulate with a circle)
       final campusCenter = Offset(size.width / 2, size.height / 2);
@@ -484,16 +495,19 @@ class MapPainter extends CustomPainter {
       textPainter.layout(minWidth: 0, maxWidth: size.width);
       textPainter.paint(
         canvas,
-        Offset(campusCenter.dx - textPainter.width / 2, campusCenter.dy - textPainter.height / 2),
+        Offset(campusCenter.dx - textPainter.width / 2,
+            campusCenter.dy - textPainter.height / 2),
       );
-      
+
       // Draw disease markers on the USM campus as location icons.
       // Only draw markers if active cases exist.
       for (final diseaseCase in diseaseCases) {
-        final markerX = campusCenter.dx + (diseaseCase.xOffset * campusRadius / 100);
-        final markerY = campusCenter.dy + (diseaseCase.yOffset * campusRadius / 100);
+        final markerX =
+            campusCenter.dx + (diseaseCase.xOffset * campusRadius / 100);
+        final markerY =
+            campusCenter.dy + (diseaseCase.yOffset * campusRadius / 100);
         final markerSize = (campusRadius * 0.1) + (diseaseCase.severity * 0.5);
-        
+
         // Render location icon using Material icon via TextPainter
         final locationIcon = String.fromCharCode(Icons.location_on.codePoint);
         final iconStyle = TextStyle(
@@ -510,7 +524,8 @@ class MapPainter extends CustomPainter {
         iconPainter.layout();
         iconPainter.paint(
           canvas,
-          Offset(markerX - iconPainter.width / 2, markerY - iconPainter.height / 2),
+          Offset(markerX - iconPainter.width / 2,
+              markerY - iconPainter.height / 2),
         );
       }
     }
@@ -518,11 +533,16 @@ class MapPainter extends CustomPainter {
 
   Color _getDiseaseColor(String disease) {
     switch (disease) {
-      case 'Dengue': return Colors.red;
-      case 'Influenza A': return Colors.orange;
-      case 'COVID-19': return Colors.purple;
-      case 'Measles': return Colors.green;
-      default: return Colors.blue;
+      case 'Dengue':
+        return Colors.red;
+      case 'Influenza A':
+        return Colors.orange;
+      case 'COVID-19':
+        return Colors.purple;
+      case 'Measles':
+        return Colors.green;
+      default:
+        return Colors.blue;
     }
   }
 
@@ -540,7 +560,7 @@ class DiseaseCase {
   final double xOffset;
   final double yOffset;
   final int caseCount;
-  
+
   DiseaseCase({
     required this.id,
     required this.disease,

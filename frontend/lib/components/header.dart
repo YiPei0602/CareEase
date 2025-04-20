@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
   final int? currentIndex;
-  
-  Header({this.currentIndex});
-  
+
+  const Header({super.key, this.currentIndex});
+
   @override
   Widget build(BuildContext context) {
     String title = "CareEase";
-    
+
     // Update title based on current screen index
     if (currentIndex != null) {
       switch (currentIndex) {
@@ -30,11 +30,11 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           break;
       }
     }
-    
+
     return CupertinoNavigationBar(
       middle: Text(
         title,
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       backgroundColor: Colors.white,
       // Removing border for a cleaner iOS look

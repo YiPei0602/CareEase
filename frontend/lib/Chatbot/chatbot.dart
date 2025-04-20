@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+// import 'dart:convert';
+// import 'package:http/http.dart' as http;
 import 'package:careease_app/services/api_service.dart';
 import 'package:careease_app/Chatbot/chat_history.dart';
 
 class ChatbotScreen extends StatefulWidget {
+  const ChatbotScreen({super.key});
+
   @override
   _ChatbotScreenState createState() => _ChatbotScreenState();
 }
@@ -12,7 +14,7 @@ class ChatbotScreen extends StatefulWidget {
 class _ChatbotScreenState extends State<ChatbotScreen> {
   final TextEditingController messageController = TextEditingController();
   List<Map<String, dynamic>> messages = [];
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   bool showPdfPrompt = false; // Controls PDF prompt visibility
 
   @override
@@ -52,13 +54,16 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           'sender': 'CareEase',
           'text': botResponse["response"],
           'isUser': false,
-          'options': botResponse["options"].isNotEmpty ? botResponse["options"] : null, // Only add options if present
+          'options': botResponse["options"].isNotEmpty
+              ? botResponse["options"]
+              : null, // Only add options if present
         });
         if (botResponse["response"].toLowerCase().contains("diagnose") ||
-            botResponse["response"].toLowerCase().contains("possible diseases")) {
+            botResponse["response"]
+                .toLowerCase()
+                .contains("possible diseases")) {
           showPdfPrompt = true;
         }
-
       });
       _scrollToBottom();
     } catch (error) {
@@ -72,11 +77,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       _scrollToBottom();
     }
   }
+
   void _scrollToBottom() {
-    Future.delayed(Duration(milliseconds: 300), () {
+    Future.delayed(const Duration(milliseconds: 300), () {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
     });
@@ -103,16 +109,18 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ChatHistoryScreen()), // Link to chat history page
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const ChatHistoryScreen()), // Link to chat history page
                     );
                   },
-                  child: Text("Chat History"),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.blue,
-                    side: BorderSide(color: Colors.blue),
+                    side: const BorderSide(color: Colors.blue),
                   ),
+                  child: const Text("Chat History"),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
@@ -124,65 +132,75 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       });
                     });
                   },
-                  child: Text("New Session"),
+                  child: const Text("New Session"),
                 )
               ],
             ),
           ),
           Expanded(
             child: ListView.builder(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final message = messages[index];
                 final isUser = message['isUser'];
 
                 return Align(
-                  alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment:
+                      isUser ? Alignment.centerRight : Alignment.centerLeft,
                   child: Column(
-                    crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                    crossAxisAlignment: isUser
+                        ? CrossAxisAlignment.end
+                        : CrossAxisAlignment.start,
                     children: [
-                      if (index == 0 || messages[index - 1]['sender'] != message['sender'])
+                      if (index == 0 ||
+                          messages[index - 1]['sender'] != message['sender'])
                         Padding(
-                          padding: EdgeInsets.only(bottom: 4.0),
+                          padding: const EdgeInsets.only(bottom: 4.0),
                           child: Text(
                             message['sender'],
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
                       Container(
-                        padding: EdgeInsets.all(12),
-                        margin: EdgeInsets.symmetric(vertical: 4),
-                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.7),
                         decoration: BoxDecoration(
                           color: isUser ? Colors.blue : Colors.grey[300],
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           message['text'],
-                          style: TextStyle(color: isUser ? Colors.white : Colors.black),
+                          style: TextStyle(
+                              color: isUser ? Colors.white : Colors.black),
                         ),
                       ),
-                      if (message.containsKey('options') && message['options'] != null)
+                      if (message.containsKey('options') &&
+                          message['options'] != null)
                         Padding(
-                          padding: EdgeInsets.only(top: 10),
+                          padding: const EdgeInsets.only(top: 10),
                           child: Wrap(
                             spacing: 8.0,
                             runSpacing: 10.0,
-                            children: (message['options'] as List<String>).map((option) {
+                            children: (message['options'] as List<String>)
+                                .map((option) {
                               return GestureDetector(
                                 onTap: () {
-                                  sendMessage(option); // Send selected option as input
+                                  sendMessage(
+                                      option); // Send selected option as input
                                 },
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 8, horizontal: 16),
                                   decoration: BoxDecoration(
                                     color: Colors.blue[100],
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
                                     option,
-                                    style: TextStyle(color: Colors.blue),
+                                    style: const TextStyle(color: Colors.blue),
                                   ),
                                 ),
                               );
@@ -197,15 +215,15 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           ),
           if (showPdfPrompt)
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 children: [
-                  Text("Would you like a PDF summary of this chat?"),
+                  const Text("Would you like a PDF summary of this chat?"),
                   ElevatedButton(
                     onPressed: () {
                       // Implement PDF generation logic
                     },
-                    child: Text("Generate PDF"),
+                    child: const Text("Generate PDF"),
                   ),
                 ],
               ),
@@ -219,14 +237,16 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     controller: messageController,
                     decoration: InputDecoration(
                       hintText: "Type a message...",
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 IconButton(
-                  icon: Icon(Icons.send, color: Colors.blue),
+                  icon: const Icon(Icons.send, color: Colors.blue),
                   onPressed: () {
                     sendMessage(messageController.text);
                     messageController.clear();
@@ -240,4 +260,3 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     );
   }
 }
-

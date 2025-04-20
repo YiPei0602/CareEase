@@ -3,6 +3,8 @@ import 'package:table_calendar/table_calendar.dart';
 import 'symptoms_screen.dart';
 
 class DailyTrackerScreen extends StatefulWidget {
+  const DailyTrackerScreen({super.key});
+
   @override
   _DailyTrackerScreenState createState() => _DailyTrackerScreenState();
 }
@@ -30,11 +32,11 @@ class _DailyTrackerScreenState extends State<DailyTrackerScreen> {
                 });
               },
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Not Feeling Well",
+                const Text("Not Feeling Well",
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 Switch(
@@ -47,12 +49,13 @@ class _DailyTrackerScreenState extends State<DailyTrackerScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             GestureDetector(
               onTap: () async {
                 final selectedSymptom = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SymptomsScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const SymptomsScreen()),
                 );
 
                 if (selectedSymptom != null) {
@@ -61,7 +64,7 @@ class _DailyTrackerScreenState extends State<DailyTrackerScreen> {
                   });
                 }
               },
-              child: Row(
+              child: const Row(
                 children: [
                   Icon(Icons.add_circle_outline, color: Colors.blue),
                   SizedBox(width: 8),
@@ -73,14 +76,14 @@ class _DailyTrackerScreenState extends State<DailyTrackerScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Your Monthly Summary",
@@ -103,7 +106,7 @@ class _DailyTrackerScreenState extends State<DailyTrackerScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
           ],
         ),
       ),

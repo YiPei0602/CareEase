@@ -1,0 +1,17 @@
+{
+  "df0321a7-49ca-46d9-bf7f-5079f289d49b": {
+    "title": "First Checkup",
+    "history": [
+      {
+        "input": "I have a fever and headache",
+        "symptoms": [
+          "fever",
+          "headache"
+        ],
+        "diseases": [
+          "fever_flu"
+        ]
+      }
+    ]
+  }
+}

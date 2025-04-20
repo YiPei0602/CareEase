@@ -1,3 +1,18 @@
+# Virtual Environments (Global)
+.venv/
+venv/
+env/
+backend/venv/
+backend/.venv/
+
+# Python general
+*.py[cod]
+__pycache__/
+*.so
+
+# VS Code
+.vscode/
+
 # Flutter (Frontend)
 frontend/.dart_tool/
 frontend/.idea/
@@ -34,8 +49,24 @@ backend/Pipfile.lock
 # General OS Files
 .DS_Store
 Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # Git & Logs
 *.log
 *.swp
 *.swo
+
+# Test artifacts
+htmlcov/
+coverage.*
+.cache/
+.tox/
+.pytest_cache/
+nosetests.xml
+test-results.xml
+
+# Backend builds (if applicable)
+dist/
+build/
+*.egg-info/

@@ -1,46 +1,62 @@
 import 'dart:async';
-import 'dart:math' as math;
-import 'package:flutter/cupertino.dart';
+// import 'dart:math' as math;
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Connection states
 enum ConnectionStep {
-  idle,         // Step 0: Initial screen
-  searching,    // Step 1: Searching for devices (dark background)
-  deviceFound,  // Step 2: Device list found (dark background)
-  connecting,   // Step 3: Connecting (dark background)
-  connected,    // Step 4: Connected (light background)
+  idle, // Step 0: Initial screen
+  searching, // Step 1: Searching for devices (dark background)
+  deviceFound, // Step 2: Device list found (dark background)
+  connecting, // Step 3: Connecting (dark background)
+  connected, // Step 4: Connected (light background)
 }
 
 class SyncPage extends StatefulWidget {
-  const SyncPage({Key? key}) : super(key: key);
+  const SyncPage({super.key});
 
   @override
   State<SyncPage> createState() => _SyncPageState();
 }
 
-class _SyncPageState extends State<SyncPage> with SingleTickerProviderStateMixin {
+class _SyncPageState extends State<SyncPage>
+    with SingleTickerProviderStateMixin {
   ConnectionStep _step = ConnectionStep.idle;
-  bool _showFoundSheet = false;
-  
+  final bool _showFoundSheet = false;
+
   // Animation controller for the radar effect during searching
   late AnimationController _searchAnimController;
   late Animation<double> _searchAnimation;
-  
+
   // List of mock nearby devices
   final List<Map<String, dynamic>> _nearbyDevices = [
-    {'name': 'CareWatch X1', 'id': '73:AB:12', 'type': 'smartwatch', 'battery': 85},
-    {'name': "Lucas's Watch", 'id': '4C:D3:87', 'type': 'smartwatch', 'battery': 62},
-    {'name': 'Fitness Band Pro', 'id': '9E:2F:18', 'type': 'band', 'battery': 74},
+    {
+      'name': 'CareWatch X1',
+      'id': '73:AB:12',
+      'type': 'smartwatch',
+      'battery': 85
+    },
+    {
+      'name': "Lucas's Watch",
+      'id': '4C:D3:87',
+      'type': 'smartwatch',
+      'battery': 62
+    },
+    {
+      'name': 'Fitness Band Pro',
+      'id': '9E:2F:18',
+      'type': 'band',
+      'battery': 74
+    },
   ];
-  
+
   // Selected device (if any)
   Map<String, dynamic>? _selectedDevice;
-  
+
   // Timer for simulating device search
   Timer? _searchTimer;
   int _foundDevicesCount = 0;
-  
+
   @override
   void initState() {
     super.initState();
@@ -48,9 +64,10 @@ class _SyncPageState extends State<SyncPage> with SingleTickerProviderStateMixin
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat();
-    _searchAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_searchAnimController);
+    _searchAnimation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_searchAnimController);
   }
-  
+
   @override
   void dispose() {
     _searchAnimController.dispose();
@@ -192,7 +209,8 @@ class _SyncPageState extends State<SyncPage> with SingleTickerProviderStateMixin
                       alignment: Alignment.center,
                       children: List.generate(3, (index) {
                         final delay = index / 3;
-                        final animValue = (_searchAnimation.value + delay) % 1.0;
+                        final animValue =
+                            (_searchAnimation.value + delay) % 1.0;
                         return Opacity(
                           opacity: 1.0 - animValue,
                           child: Container(
@@ -241,7 +259,8 @@ class _SyncPageState extends State<SyncPage> with SingleTickerProviderStateMixin
           ),
           const Spacer(flex: 1),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
             child: SizedBox(
               width: double.infinity,
               height: 48,
@@ -291,9 +310,9 @@ class _SyncPageState extends State<SyncPage> with SingleTickerProviderStateMixin
             ),
           ),
           const SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: const Text(
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.0),
+            child: Text(
               "Available Devices",
               style: TextStyle(
                 fontSize: 16,
@@ -318,7 +337,8 @@ class _SyncPageState extends State<SyncPage> with SingleTickerProviderStateMixin
                     side: const BorderSide(color: Color(0xFF1D4A5C), width: 1),
                   ),
                   child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     leading: Container(
                       width: 48,
                       height: 48,
@@ -327,8 +347,8 @@ class _SyncPageState extends State<SyncPage> with SingleTickerProviderStateMixin
                         borderRadius: BorderRadius.circular(24),
                       ),
                       child: Icon(
-                        device['type'] == 'smartwatch' 
-                            ? Icons.watch_outlined 
+                        device['type'] == 'smartwatch'
+                            ? Icons.watch_outlined
                             : Icons.fitness_center,
                         color: Colors.lightBlueAccent,
                       ),
@@ -350,7 +370,8 @@ class _SyncPageState extends State<SyncPage> with SingleTickerProviderStateMixin
                     trailing: ElevatedButton(
                       onPressed: () => _selectDevice(device),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue, // Blue button as requested
+                        backgroundColor:
+                            Colors.blue, // Blue button as requested
                         foregroundColor: Colors.white,
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -371,10 +392,10 @@ class _SyncPageState extends State<SyncPage> with SingleTickerProviderStateMixin
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(24.0),
+          const Padding(
+            padding: EdgeInsets.all(24.0),
             child: Column(
-              children: const [
+              children: [
                 Text(
                   "Make sure your device is turned on and Bluetooth is enabled",
                   style: TextStyle(
@@ -466,7 +487,8 @@ class _SyncPageState extends State<SyncPage> with SingleTickerProviderStateMixin
           const Spacer(flex: 2),
           // Cancel button
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
             child: SizedBox(
               width: double.infinity,
               height: 48,
@@ -500,81 +522,80 @@ class _SyncPageState extends State<SyncPage> with SingleTickerProviderStateMixin
     );
   }
 
- // Step 4: Connected - simplified screen with grey background and "Continue" button fixed at bottom
-Widget _buildConnectedContent() {
-  return Container(
-    color: Colors.grey[100],
-    width: double.infinity,
-    height: double.infinity,
-    child: Column(
-      children: [
-        Expanded(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.check_circle_rounded,
-                    size: 80,
-                    color: Color(0xFF12B76A),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    "Connected Successfully!",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2D3142),
+  // Step 4: Connected - simplified screen with grey background and "Continue" button fixed at bottom
+  Widget _buildConnectedContent() {
+    return Container(
+      color: Colors.grey[100],
+      width: double.infinity,
+      height: double.infinity,
+      child: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.check_circle_rounded,
+                      size: 80,
+                      color: Color(0xFF12B76A),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "${_selectedDevice?['name'] ?? 'Your smartwatch'} is now paired with CareEase",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Color(0xFF667085),
+                    const SizedBox(height: 24),
+                    const Text(
+                      "Connected Successfully!",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF2D3142),
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        // "Continue" button at the bottom
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2E7DFF),
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text(
-                "Continue",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                    const SizedBox(height: 8),
+                    Text(
+                      "${_selectedDevice?['name'] ?? 'Your smartwatch'} is now paired with CareEase",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF667085),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-
+          // "Continue" button at the bottom
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2E7DFF),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  "Continue",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   // Build main content based on current step
   Widget _buildContent() {
@@ -620,7 +641,7 @@ Widget _buildConnectedContent() {
       _selectedDevice = device;
       _step = ConnectionStep.connecting;
     });
-    
+
     // Simulate connection process
     Future.delayed(const Duration(seconds: 3), () {
       if (!mounted) return;

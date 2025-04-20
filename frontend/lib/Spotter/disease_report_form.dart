@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DiseaseReportForm extends StatefulWidget {
-  const DiseaseReportForm({Key? key}) : super(key: key);
+  const DiseaseReportForm({super.key});
 
   @override
   State<DiseaseReportForm> createState() => _DiseaseReportFormState();
@@ -13,7 +13,13 @@ class _DiseaseReportFormState extends State<DiseaseReportForm> {
   final TextEditingController _symptomsController = TextEditingController();
   int _selectedSeverity = 3;
   bool _hasDocument = false;
-  final List<String> _diseases = ['Dengue', 'Influenza A', 'COVID-19', 'Measles', 'Other'];
+  final List<String> _diseases = [
+    'Dengue',
+    'Influenza A',
+    'COVID-19',
+    'Measles',
+    'Other'
+  ];
 
   @override
   void dispose() {
@@ -153,11 +159,15 @@ class _DiseaseReportFormState extends State<DiseaseReportForm> {
                   const SizedBox(height: 8),
                   Column(
                     children: [
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text('Mild', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                          Text('Severe', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                        children: [
+                          Text('Mild',
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.grey)),
+                          Text('Severe',
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.grey)),
                         ],
                       ),
                       Slider(
@@ -208,15 +218,20 @@ class _DiseaseReportFormState extends State<DiseaseReportForm> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              _hasDocument ? Icons.check_circle : Icons.upload_file,
+                              _hasDocument
+                                  ? Icons.check_circle
+                                  : Icons.upload_file,
                               color: _hasDocument ? Colors.green : Colors.blue,
                               size: 32,
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              _hasDocument ? 'Document uploaded' : 'Tap to upload document',
+                              _hasDocument
+                                  ? 'Document uploaded'
+                                  : 'Tap to upload document',
                               style: TextStyle(
-                                color: _hasDocument ? Colors.green : Colors.blue,
+                                color:
+                                    _hasDocument ? Colors.green : Colors.blue,
                               ),
                             ),
                           ],
@@ -252,7 +267,7 @@ class _DiseaseReportFormState extends State<DiseaseReportForm> {
                     child: const Text(
                       'Submit Report',
                       style: TextStyle(
-                        fontSize: 16, 
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
