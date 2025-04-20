@@ -2,10 +2,26 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app uses the microphone for speech recognition</string>
+
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>This app uses speech recognition to convert your voice to text</string>
+
+	<!-- Allow HTTP to localhost for development -->
+  <key>NSAppTransportSecurity</key>
+  <dict>
+    <!-- let iOS talk to 127.0.0.1 or 10.0.2.2 -->
+    <key>NSAllowsLocalNetworking</key>
+    <true/>
+    <key>NSAllowsArbitraryLoads</key>
+    <true/>
+  </dict>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Careease App</string>
+	<string>Frontend</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +29,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>careease_app</string>
+	<string>frontend</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -45,18 +61,5 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-
-    <!-- Added for Google Maps and Location Permissions -->
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app needs your location to show nearby disease information.</string>
-
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>This app needs continuous location access to provide real-time updates.</string>
-
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>This app requires location access to provide ongoing health alerts.</string>
-
-    <key>io.flutter.embedded_views_preview</key>
-    <true/>
 </dict>
 </plist>

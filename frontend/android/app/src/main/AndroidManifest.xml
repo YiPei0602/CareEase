@@ -1,10 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 👇 Add this -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application
         android:label="careease_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         
-        <!-- Add this meta-data for Google Maps API key -->
+        <!-- Google Maps API Key (optional) -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDRSDyVILOIcQn-_fRBWgnfnE_sxgAbzXE"/>

@@ -33,12 +33,15 @@ dependencies:
   cupertino_icons: ^1.0.6
   table_calendar: ^3.2.0
   animate_do: ^4.2.0
-  google_maps_flutter: ^2.7.0
-  location: ^5.0.3
   model_viewer_plus: ^1.9.0
   webview_flutter: ^4.2.2
   webview_flutter_android: ^3.9.3
   http: ^1.3.0
+  video_player: ^2.8.6
+  speech_to_text: ^6.3.0
+
+
+
 
 
 dev_dependencies:
@@ -68,6 +71,7 @@ flutter:
     - assets/CareEase_logo.png
     - assets/vhack_profile.jpg
     - assets/vhack_smartwatch.png
+    - assets/doctor_avatar_female.mp4
     - assets/female_dynamic_pose.glb 
     - assets/drunk_idle_variation.glb
     - assets/jogging.glb
