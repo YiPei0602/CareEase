@@ -1,4 +1,11 @@
 from fastapi import APIRouter, Request
+# from backend.services.ollama_client import ask_ollama
+# from backend.services.extract_from_llm_response import extract_info_from_llm_response
+# from backend.services.prompt_builder import build_prompt
+# from backend.sessions.session_manager import SessionManager
+# from backend.services.ai_engine import get_ai_response
+# from backend.services.user_profile import fetch_user_profile
+
 from services.ollama_client import ask_ollama
 from services.extract_from_llm_response import extract_info_from_llm_response
 from services.prompt_builder import build_prompt

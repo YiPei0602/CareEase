@@ -4,6 +4,7 @@ venv/
 env/
 backend/venv/
 backend/.venv/
+myenv/
 
 # Python general
 *.py[cod]

@@ -1,6 +1,6 @@
 fastapi
-uvicornw
-spacy
+uvicorn
+
 scikit-learn
 pyyaml
 joblib
