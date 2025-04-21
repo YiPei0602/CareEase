@@ -1,41 +1,37 @@
-def build_prompt(message: str, history: list = [], current_data: dict = {}) -> str:
+def build_prompt(message: str, history: list = [], current_data: dict = {}, user_profile: dict = {}) -> str:
     history_text = "\n".join([f"User: {h['user']}\nAI: {h['ai']}" for h in history])
+    profile_info = ", ".join(f"{k}: {v}" for k, v in user_profile.items())
     symptom_info = ", ".join(f"{k}: {v}" for k, v in current_data.items() if v)
 
     return f"""
-You are a helpful AI medical assistant. You're gathering details for a health consultation. 
+You are a helpful AI doctor assistant collecting medical intake info for diagnosis.
 
-Return ONLY a JSON block with the following keys:
-- symptoms (list of symptom keywords)
-- duration (string or null)
-- triggers (list of triggers if mentioned)
-- urgency (string: "high" for severe cases like chest pain or bleeding, "medium" for persistent discomfort, "low" for minor issues)
+First, confirm these profile details:
+{profile_info}
 
-If you don't have enough information to fill in a field, return null or an empty list — and ask the user a clarifying question.
+Then, ask follow-up questions to collect the following:
+- symptoms (list)
+- duration (string)
+- signs (list)
+- triggers (list)
 
-Here are examples:
-
-User: "I have had a sharp pain in my lower back for two days. It gets worse when I sit."
-AI: {{
-  "symptoms": ["sharp pain", "lower back pain"],
-  "duration": "2 days",
-  "triggers": ["sitting"],
-  "urgency": "medium"
+Use this format ONLY as your response (valid JSON block):
+{{
+  "symptoms": [...],
+  "duration": "...",
+  "triggers": [...],
+  "urgency": "low/medium/high"
 }}
 
-User: "I’ve had a dull ache in my chest and arm for about a week. It gets worse when I walk uphill."
-AI: {{
-  "symptoms": ["dull ache", "chest pain", "arm pain"],
-  "duration": "about a week",
-  "triggers": ["walking uphill"],
-  "urgency": "medium"
-}}
+If not enough data is provided, leave unknowns as null or empty lists and ask for clarification.
+⚠️ Do not include explanations, extra text, markdown (like ```json), or comments (// ...). Only return raw JSON.
 
-Current known info: {symptom_info or 'None'}
+Known so far:
+{symptom_info or 'None'}
 
-Chat history so far:
+Conversation history:
 {history_text}
 
-Now the user says: "{message}"
+User says: "{message}"
 AI:
 """

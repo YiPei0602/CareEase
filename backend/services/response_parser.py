@@ -1,38 +1,40 @@
 import re
 import json
 
-def process_ollama_response(response: str):
+def process_ollama_response(response_text):
     try:
-        # Remove the comment part (anything after "//") from the response
-        response = re.sub(r"//.*", "", response)
+        if isinstance(response_text, dict):
+            # It's already a dict (maybe from a pre-parsed JSON response)
+            print("🧾 LLM Response (dict):", response_text)
+            return {
+                "symptoms": response_text.get("symptoms", []),
+                "duration": response_text.get("duration"),
+                "triggers": response_text.get("triggers", []),
+                "urgency": response_text.get("urgency"),
+            }
 
-        # Try to find the JSON block in the response string
-        match = re.search(r'\{[\s\S]*?\}', response)
+        print("🧾 LLM RAW TEXT:\n", response_text)
+
+        # Otherwise, assume it's a raw text block and extract JSON
+        match = re.search(r"```json\s*(\{.*?\})\s*```", response_text, re.DOTALL)
         if not match:
-            raise ValueError("No JSON block found in response")
+            print("❌ No complete JSON block found.")
+            return {}
 
-        json_data = match.group(0)
-        json_data = json_data.replace("'", '"')  # Fix single quotes to double quotes (JSON standard)
-        json_data = re.sub(r",\s*}", "}", json_data)  # Remove trailing commas before closing curly brace
-        json_data = re.sub(r",\s*\]", "]", json_data)  # Remove trailing commas before closing square bracket
+        json_str = match.group(1)
+        json_str = re.sub(r"//.*", "", json_str)  # remove inline comments
 
-        # Load JSON data from the cleaned string
-        data = json.loads(json_data)
+        parsed = json.loads(json_str)
 
-        # Return the extracted information
+        print("✅ Parsed JSON:\n", parsed)
+
         return {
-            "symptoms": data.get("symptoms", []),
-            "duration": data.get("duration"),
-            "triggers": data.get("triggers", []),
-            "urgency": data.get("urgency", "low")
+            "symptoms": parsed.get("symptoms", []),
+            "duration": parsed.get("duration"),
+            "triggers": parsed.get("triggers", []),
+            "urgency": parsed.get("urgency"),
         }
 
     except Exception as e:
-        print("❌ Failed to parse LLM output:", e)
-        print("🧾 Raw response was:", response)
-        return {
-            "symptoms": [],
-            "duration": None,
-            "triggers": [],
-            "urgency": "low"
-        }
+        print(f"❌ Error processing LLM response: {e}")
+        return {}

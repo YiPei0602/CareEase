@@ -48,14 +48,14 @@ async def chat(request: Request):
     session = SessionManager(user_id, session_id)
     session.load()
 
-    # Check if session is already completed or closed
     if session.get_data().get("status") in ["completed", "closed"]:
         return {"error": "This session is already completed or closed. Please start a new session."}
 
-    # Build prompt
-    prompt = build_prompt(message, session.get_chat_history(), session.get_data())
+    # 👤 Load user profile
+    profile = get_user_profile(user_id)
 
-    # AI response
+    # 🧠 Prompt and LLM response
+    prompt = build_prompt(message, session.get_chat_history(), session.get_data(), profile)
     follow_up = ask_ollama(prompt)
     session.append_history(user_message=message, ai_response=follow_up)
 
@@ -63,17 +63,30 @@ async def chat(request: Request):
     extracted_data = extract_info_from_llm_response(follow_up)
     session.update(extracted_data)
 
-    # Save
+    # Save session
     if session.is_complete():
         session.mark_complete()
     session.save()
 
-    # Final response
+    # Return combined response
+    full_response = {
+        "response": {
+            "symptoms": extracted_data.get("symptoms", []),
+            "duration": extracted_data.get("duration"),
+            "triggers": extracted_data.get("triggers", []),
+            "urgency": extracted_data.get("urgency"),
+        }
+    }
+
+    if extracted_data.get("follow_up"):
+        full_response["follow_up"] = extracted_data["follow_up"]
+
+    # Final AI wrap-up when complete
     if session.is_complete():
         result = get_ai_response(session.get_data())
-        return {"response": f"{follow_up}\n\n{result}"}
+        full_response["final_diagnosis"] = result
 
-    return {"response": follow_up}
+    return full_response
 
 @router.post("/end_session")
 async def end_session(request: Request):
