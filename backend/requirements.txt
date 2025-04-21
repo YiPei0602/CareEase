@@ -1,8 +1,9 @@
 fastapi
-uvicornw
+uvicorn
 spacy
 scikit-learn
 pyyaml
 joblib
 pydantic
 python-dotenv
+firebase-admin
