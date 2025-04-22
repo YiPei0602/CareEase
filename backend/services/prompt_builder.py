@@ -1,37 +1,40 @@
-def build_prompt(message: str, history: list = [], current_data: dict = {}, user_profile: dict = {}) -> str:
-    history_text = "\n".join([f"User: {h['user']}\nAI: {h['ai']}" for h in history])
-    profile_info = ", ".join(f"{k}: {v}" for k, v in user_profile.items())
-    symptom_info = ", ".join(f"{k}: {v}" for k, v in current_data.items() if v)
+def build_prompt(*args, **kwargs):
+    raise NotImplementedError("Use ollama_conversational for iterative flow.")
 
-    return f"""
-You are a helpful AI doctor assistant collecting medical intake info for diagnosis.
+# def build_prompt(message: str, history: list = [], current_data: dict = {}, user_profile: dict = {}) -> str:
+#     history_text = "\n".join([f"User: {h['user']}\nAI: {h['ai']}" for h in history])
+#     profile_info = ", ".join(f"{k}: {v}" for k, v in user_profile.items())
+#     symptom_info = ", ".join(f"{k}: {v}" for k, v in current_data.items() if v)
 
-First, confirm these profile details:
-{profile_info}
+#     return f"""
+# You are a helpful AI doctor assistant collecting medical intake info for diagnosis.
 
-Then, ask follow-up questions to collect the following:
-- symptoms (list)
-- duration (string)
-- signs (list)
-- triggers (list)
+# First, confirm these profile details:
+# {profile_info}
 
-Use this format ONLY as your response (valid JSON block):
-{{
-  "symptoms": [...],
-  "duration": "...",
-  "triggers": [...],
-  "urgency": "low/medium/high"
-}}
+# Then, ask follow-up questions to collect the following:
+# - symptoms (list)
+# - duration (string)
+# - signs (list)
+# - triggers (list)
 
-If not enough data is provided, leave unknowns as null or empty lists and ask for clarification.
-⚠️ Do not include explanations, extra text, markdown (like ```json), or comments (// ...). Only return raw JSON.
+# Use this format ONLY as your response (valid JSON block):
+# {{
+#   "symptoms": [...],
+#   "duration": "...",
+#   "triggers": [...],
+#   "urgency": "low/medium/high"
+# }}
 
-Known so far:
-{symptom_info or 'None'}
+# If not enough data is provided, leave unknowns as null or empty lists and ask for clarification.
+# ⚠️ Do not include explanations, extra text, markdown (like ```json), or comments (// ...). Only return raw JSON.
 
-Conversation history:
-{history_text}
+# Known so far:
+# {symptom_info or 'None'}
 
-User says: "{message}"
-AI:
-"""
+# Conversation history:
+# {history_text}
+
+# User says: "{message}"
+# AI:
+# """

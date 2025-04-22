@@ -6,33 +6,40 @@ def load_model():
 
 def match_disease(session_data):
     model = load_model()
-
-    symptoms_text = " ".join(session_data.get("symptoms", [])) + " " + session_data.get("duration", "")
-
-    # Predict condition
-    prediction = model.predict([symptoms_text])[0]  # e.g., "angina"
-
-    # Example hardcoded explanation
-    disease_data = {
-        "angina": {
-            "explanation": "Angina is chest pain caused by reduced blood flow to the heart muscles.",
-            "specialist": "Cardiologist",
-            "care_tips": ["Avoid exertion", "Eat a heart-healthy diet", "Follow medication schedule"]
+    features = " ".join(
+        str(session_data.get(k, "")) for k in [
+            'symptoms','duration','severity','body_part','context'
+        ]
+    )
+    pred = model.predict([features])[0]
+    mapping = {
+        'angina': {
+            'explanation': 'Angina is chest pain due to reduced blood flow.',
+            'specialist': 'Cardiologist',
+            'care_tips': ['Rest', 'Avoid stress']
         },
-        "asthma": {
-            "explanation": "Asthma is a condition in which your airways narrow and swell and may produce extra mucus.",
-            "specialist": "Pulmonologist",
-            "care_tips": ["Use inhaler", "Avoid triggers", "Monitor breathing"]
+        'asthma': {
+            'explanation': 'Asthma causes airway inflammation.',
+            'specialist': 'Pulmonologist',
+            'care_tips': ['Use inhaler', 'Avoid triggers']
         }
     }
+    info = mapping.get(pred, {'explanation':'','specialist':'General Practitioner','care_tips':['Consult doctor']})
+    return {'condition': pred, **info}
 
-    condition_info = disease_data.get(prediction, {
-        "explanation": "No detailed info available.",
-        "specialist": "General Practitioner",
-        "care_tips": ["Consult a doctor"]
-    })
 
+# services/user_profile.py
+
+def get_user_profile(user_id):
     return {
-        "condition": prediction,
-        **condition_info
+        'name': 'Jane Doe',
+        'age': 28,
+        'gender': 'female',
+        'weight': 55,
+        'height': 165,
+        'medical_conditions': ['asthma'],
+        'medications': ['Ventolin'],
+        'hospitalizations': ['pneumonia - 2019'],
+        'family_history': ['heart disease'],
+        'lifestyle': ['non-smoker']
     }

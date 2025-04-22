@@ -5,7 +5,9 @@ import uuid
 
 # Initialize Firebase
 if not firebase_admin._apps:
-    cred = credentials.Certificate("C:\\Users\\User\\Documents\\CareEase\\firebase\\caseease-6397e-firebase-adminsdk-fbsvc-cc704ea4f5.json")
+    cred = credentials.Certificate(
+        "C:\\Users\\User\\Documents\\CareEase\\firebase\\caseease-6397e-firebase-adminsdk-fbsvc-cc704ea4f5.json"
+    )
     firebase_admin.initialize_app(cred)
 
 db = firestore.client()
@@ -15,29 +17,47 @@ class SessionManager:
         self.user_id = user_id
         self.session_id = session_id or str(uuid.uuid4())
         self.data = {
+            # identifiers
             "user_id": user_id,
             "session_id": self.session_id,
             "status": "in_progress",
+            # required symptom info
             "symptoms": [],
             "duration": None,
             "severity": None,
+            "body_part": None,
+            "triggers": [],
+            "context": None,
+            # basic profile (to confirm once)
+            "name": None,
             "age": None,
             "gender": None,
+            # medical history fields
+            "weight": None,
+            "height": None,
+            "medical_conditions": [],
+            "medications": [],
+            "hospitalizations": [],
+            "family_history": [],
+            "lifestyle": [],
+            # chat history and feedback
             "history": [],
+            "diagnosis": None,
+            "explanation": None,
+            "specialist": None,
+            "care_tips": [],
+            "feedback_due": None,
             "feedback": None,
             "created_at": datetime.utcnow().isoformat()
         }
 
     def update(self, updates: dict):
         for key, value in updates.items():
-            if key in self.data:
-                if isinstance(self.data[key], list):
-                    if isinstance(value, list):
-                        self.data[key].extend(value)
-                    else:
-                        self.data[key].append(value)
+            if key in self.data and isinstance(self.data[key], list):
+                if isinstance(value, list):
+                    self.data[key].extend(value)
                 else:
-                    self.data[key] = value
+                    self.data[key].append(value)
             else:
                 self.data[key] = value
 
@@ -63,24 +83,19 @@ class SessionManager:
         if doc.exists:
             self.data = doc.to_dict()
         else:
-            print(f"[WARN] Session not found for session_id {self.session_id}, starting new session.")
-            self.data = {
-                "user_id": self.user_id,
-                "session_id": self.session_id,
-                "status": "new",
-                "symptoms": [],
-                "duration": None,
-                "severity": None,
-                "age": None,
-                "gender": None,
-                "history": [],
-                "feedback": None,
-                "created_at": datetime.utcnow().isoformat()
-            }
+            print(f"[WARN] Session not found: {self.session_id}, starting fresh.")
 
     def is_complete(self):
-        required = ["symptoms", "duration", "severity", "age", "gender"]
-        return all(self.data.get(field) for field in required)
+        required = [
+            "symptoms", "duration", "severity",
+            "body_part", "triggers", "context"
+        ]
+        # check that each required field is non-null or non-empty
+        for field in required:
+            val = self.data.get(field)
+            if val is None or (isinstance(val, (list, str)) and not val):
+                return False
+        return True
 
     def get_data(self):
         return self.data

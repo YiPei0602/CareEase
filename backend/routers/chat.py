@@ -1,125 +1,71 @@
 from fastapi import APIRouter, Request, HTTPException
-from services.ollama_client import ask_ollama
-from services.extract_from_llm_response import extract_info_from_llm_response
-from services.prompt_builder import build_prompt
+from services.ollama_conversational import ask_ollama_conversational
+from logic.diagnosis_engine import match_disease
 from sessions.session_manager import SessionManager
-from services.ai_engine import get_ai_response
 from services.user_profile import get_user_profile
+from datetime import datetime, timedelta
 from firebase_admin import firestore
 
 router = APIRouter()
 db = firestore.client()
 
-@router.post("/start_session")
-async def start_session(request: Request):
-    body = await request.json()
-    user_id = body["user_id"]
-
-    # Try to find existing in-progress session
-    docs = db.collection("sessions") \
-        .where("user_id", "==", user_id) \
-        .where("status", "==", "in_progress") \
-        .order_by("created_at", direction=firestore.Query.DESCENDING) \
-        .limit(1) \
-        .stream()
-
-    session_doc = next(docs, None)
-    if session_doc:
-        session_id = session_doc.id
-        session = SessionManager(user_id, session_id)
-        session.load()
-        return {"message": "Resumed previous session", "session_id": session_id}
-
-    # Else start a new one
-    session = SessionManager(user_id)
-    session.save()
-    return {"message": "New session started", "session_id": session.session_id}
-
 @router.post("/chat")
 async def chat(request: Request):
     body = await request.json()
-    user_id = body["user_id"]
+    user_id = body.get("user_id")
     message = body.get("message")
     session_id = body.get("session_id")
 
-    if message is None or session_id is None:
-        raise HTTPException(status_code=400, detail="Missing 'message' or 'session_id'")
+    if not user_id or not message:
+        raise HTTPException(status_code=400, detail="Missing 'user_id' or 'message'")
 
+    # Load existing or create new session
     session = SessionManager(user_id, session_id)
     session.load()
 
-    if session.get_data().get("status") in ["completed", "closed"]:
-        return {"error": "This session is already completed or closed. Please start a new session."}
+    # Profile confirmation step
+    if session.get_data().get("name") is None:
+        profile = get_user_profile(user_id)
+        session.update(profile)
+        confirm_q = (
+            f"Just to confirm, you are {profile['name']}, "
+            f"{profile['age']} years old, {profile['gender']}. Is that correct?"
+        )
+        session.append_history(user_message="(system)", ai_response=confirm_q)
+        session.save()
+        return {"session_id": session.session_id, "doctor_reply": confirm_q}
 
-    # 👤 Load user profile
-    profile = get_user_profile(user_id)
+    # Call LLM for follow-up or extraction
+    history = session.get_chat_history()
+    result = ask_ollama_conversational(message, history, session.get_data())
+    doctor_reply = result.get("doctor_reply", "")
+    extracted = result.get("extracted_data", {})
 
-    # 🧠 Prompt and LLM response
-    prompt = build_prompt(message, session.get_chat_history(), session.get_data(), profile)
-    follow_up = ask_ollama(prompt)
-    session.append_history(user_message=message, ai_response=follow_up)
+    # Update session
+    session.append_history(user_message=message, ai_response=doctor_reply)
+    session.update(extracted)
 
-    # Extract and update
-    extracted_data = extract_info_from_llm_response(follow_up)
-    session.update(extracted_data)
-
-    # Save session
+    # Check if we have all required info
     if session.is_complete():
         session.mark_complete()
+        # Trigger diagnosis engine
+        diag = match_disease(session.get_data())
+        session.update({
+            "diagnosis": diag["condition"],
+            "explanation": diag["explanation"],
+            "specialist": diag["specialist"],
+            "care_tips": diag["care_tips"],
+            "feedback_due": (datetime.utcnow() + timedelta(days=3)).isoformat()
+        })
+        session.save()
+        final_reply = (
+            f"Based on your input, the most likely condition is {diag['condition']}. "
+            f"Explanation: {diag['explanation']}. "
+            f"You should see a {diag['specialist']}. "
+            f"Care tips: {', '.join(diag['care_tips'])}."
+        )
+        return {"session_id": session.session_id, "doctor_reply": final_reply}
+
+    # Not complete yet: ask next question
     session.save()
-
-    # Return combined response
-    full_response = {
-        "response": {
-            "symptoms": extracted_data.get("symptoms", []),
-            "duration": extracted_data.get("duration"),
-            "triggers": extracted_data.get("triggers", []),
-            "urgency": extracted_data.get("urgency"),
-        }
-    }
-
-    if extracted_data.get("follow_up"):
-        full_response["follow_up"] = extracted_data["follow_up"]
-
-    # Final AI wrap-up when complete
-    if session.is_complete():
-        result = get_ai_response(session.get_data())
-        full_response["final_diagnosis"] = result
-
-    return full_response
-
-@router.post("/end_session")
-async def end_session(request: Request):
-    body = await request.json()
-    user_id = body.get("user_id")
-    session_id = body.get("session_id")
-
-    if not user_id or not session_id:
-        raise HTTPException(status_code=400, detail="Missing 'user_id' or 'session_id'")
-
-    session = SessionManager(user_id, session_id)
-    session.load()
-
-    # Mark session as closed
-    session.close()
-    session.save()
-
-    return {"message": "Session closed."}
-
-@router.post("/feedback")
-async def submit_feedback(request: Request):
-    body = await request.json()
-    session_id = body.get("session_id")
-    feedback = body.get("feedback")
-
-    if not session_id or not feedback:
-        raise HTTPException(status_code=400, detail="Missing session_id or feedback")
-
-    doc_ref = db.collection("sessions").document(session_id)
-    doc = doc_ref.get()
-
-    if not doc.exists:
-        raise HTTPException(status_code=404, detail="Session not found")
-
-    doc_ref.update({"feedback": feedback})
-    return {"message": "Feedback submitted"}
+    return {"session_id": session.session_id, "doctor_reply": doctor_reply}
