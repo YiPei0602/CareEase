@@ -71,3 +71,8 @@ test-results.xml
 dist/
 build/
 *.egg-info/
+
+# Firebase
+firebase/*.json
+
+#test

@@ -1,8 +1,13 @@
 fastapi
 uvicorn
+<<<<<<< HEAD
 
+=======
+spacy
+>>>>>>> 7f8690cf2d9636545d395232a52ef00bba6803fb
 scikit-learn
 pyyaml
 joblib
 pydantic
 python-dotenv
+firebase-admin

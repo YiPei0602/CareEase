@@ -20,8 +20,14 @@ def ask_ollama(prompt: str):
             print(f"❌ Extraction failed: Error code: {res.status_code} - {res.text}")
             return None
 
-        response_text = res.json()["response"]
-        return process_ollama_response(response_text)
+        response_json = res.json()["response"]
+
+        # If already a dict, return directly (Ollama streaming returns may do this)
+        if isinstance(response_json, dict):
+            return response_json
+
+        # If it's a string, try to parse it
+        return process_ollama_response(response_json)
 
     except Exception as e:
         print(f"❌ Error extracting from LLM: {e}")

@@ -1,16 +1,13 @@
-# Placeholder function to fetch user profile information
-def fetch_user_profile(user_id: str):
-    """
-    Fetches user profile details from a data source.
-    For now, it returns dummy data; replace with your actual logic.
-    """
-    # Example: Replace this with actual logic to fetch user profile info from a database
-    profile = {
-        "name": "John Doe",
-        "age": 30,
-        "gender": "Male",
-        "medical_history": ["Hypertension"],
-        "current_conditions": ["Chest pain"]
+def get_user_profile(user_id):
+    return {
+        "name": "Jane Doe",
+        "age": 28,
+        "gender": "female",
+        "weight": 55,
+        "height": 165,
+        "medical_conditions": ["asthma"],
+        "medications": ["Ventolin"],
+        "lifestyle": ["non-smoker"],
+        "family_history": ["heart disease"],
+        "previous_hospitalizations": ["pneumonia - 2019"]
     }
-    
-    return profile

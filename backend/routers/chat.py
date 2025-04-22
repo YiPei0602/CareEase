@@ -1,75 +1,71 @@
-from fastapi import APIRouter, Request
-# from backend.services.ollama_client import ask_ollama
-# from backend.services.extract_from_llm_response import extract_info_from_llm_response
-# from backend.services.prompt_builder import build_prompt
-# from backend.sessions.session_manager import SessionManager
-# from backend.services.ai_engine import get_ai_response
-# from backend.services.user_profile import fetch_user_profile
-
-from services.ollama_client import ask_ollama
-from services.extract_from_llm_response import extract_info_from_llm_response
-from services.prompt_builder import build_prompt
+from fastapi import APIRouter, Request, HTTPException
+from services.ollama_conversational import ask_ollama_conversational
+from logic.diagnosis_engine import match_disease
 from sessions.session_manager import SessionManager
-from services.ai_engine import get_ai_response
-from services.user_profile import fetch_user_profile
+from services.user_profile import get_user_profile
+from datetime import datetime, timedelta
+from firebase_admin import firestore
 
 router = APIRouter()
-sessions = {}
-
-@router.post("/start_session")
-async def start_session(request: Request):
-    body = await request.json()
-    user_id = body["user_id"]
-
-    profile = fetch_user_profile(user_id)
-    session = SessionManager(user_id)
-    session.update(profile)
-
-    sessions[user_id] = session
-    return {"message": "Session started."}
+db = firestore.client()
 
 @router.post("/chat")
 async def chat(request: Request):
     body = await request.json()
-    user_id = body["user_id"]
-    message = body["message"]
+    user_id = body.get("user_id")
+    message = body.get("message")
+    session_id = body.get("session_id")
 
-    # Retrieve or create session
-    session = sessions.get(user_id)
-    if not session:
-        session = SessionManager(user_id)
-        sessions[user_id] = session
+    if not user_id or not message:
+        raise HTTPException(status_code=400, detail="Missing 'user_id' or 'message'")
 
-    # Build prompt using user message, history, and current data
-    prompt = build_prompt(message, session.get_chat_history(), session.get_data())
-    
-    # Call Ollama API to get the AI's response and follow-up question
-    follow_up = ask_ollama(prompt)
-    
-    # Append history with the latest exchange (user message and AI response)
-    session.append_history(user_message=message, ai_response=follow_up)
+    # Load existing or create new session
+    session = SessionManager(user_id, session_id)
+    session.load()
 
-    # Process the LLM's response and extract the relevant information
-    extracted_data = extract_info_from_llm_response(follow_up)
-    
-    # Update the session with the extracted data
-    session.update(extracted_data)
+    # Profile confirmation step
+    if session.get_data().get("name") is None:
+        profile = get_user_profile(user_id)
+        session.update(profile)
+        confirm_q = (
+            f"Just to confirm, you are {profile['name']}, "
+            f"{profile['age']} years old, {profile['gender']}. Is that correct?"
+        )
+        session.append_history(user_message="(system)", ai_response=confirm_q)
+        session.save()
+        return {"session_id": session.session_id, "doctor_reply": confirm_q}
 
-    # Check if the session is complete (i.e., all required data is gathered)
+    # Call LLM for follow-up or extraction
+    history = session.get_chat_history()
+    result = ask_ollama_conversational(message, history, session.get_data())
+    doctor_reply = result.get("doctor_reply", "")
+    extracted = result.get("extracted_data", {})
+
+    # Update session
+    session.append_history(user_message=message, ai_response=doctor_reply)
+    session.update(extracted)
+
+    # Check if we have all required info
     if session.is_complete():
-        # If complete, get a final AI response
-        result = get_ai_response(session.get_data())  # Generate the final AI response based on the full data
-        return {"response": f"{follow_up}\n\n{result}"}
+        session.mark_complete()
+        # Trigger diagnosis engine
+        diag = match_disease(session.get_data())
+        session.update({
+            "diagnosis": diag["condition"],
+            "explanation": diag["explanation"],
+            "specialist": diag["specialist"],
+            "care_tips": diag["care_tips"],
+            "feedback_due": (datetime.utcnow() + timedelta(days=3)).isoformat()
+        })
+        session.save()
+        final_reply = (
+            f"Based on your input, the most likely condition is {diag['condition']}. "
+            f"Explanation: {diag['explanation']}. "
+            f"You should see a {diag['specialist']}. "
+            f"Care tips: {', '.join(diag['care_tips'])}."
+        )
+        return {"session_id": session.session_id, "doctor_reply": final_reply}
 
-    return {"response": follow_up}  # If not complete, return the follow-up from LLM
-
-
-@router.post("/end_session")
-async def end_session(request: Request):
-    body = await request.json()
-    user_id = body["user_id"]
-
-    if user_id in sessions:
-        sessions.pop(user_id)
-
-    return {"message": "Session ended."}
+    # Not complete yet: ask next question
+    session.save()
+    return {"session_id": session.session_id, "doctor_reply": doctor_reply}
