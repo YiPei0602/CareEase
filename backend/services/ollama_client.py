@@ -7,8 +7,8 @@ from services.prompt_builder import build_prompt
 from services.response_parser import process_ollama_response
 
 OLLAMA_HOST = "http://localhost:11434"
-# MODEL_NAME = "doctor-phi3"
-MODEL_NAME = "llama3.2:1b "
+MODEL_NAME = "doctor-phi3"
+# MODEL_NAME = "llama3.2:1b "
 
 def ask_ollama(prompt: str):
     try:

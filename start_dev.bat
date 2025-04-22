@@ -6,9 +6,9 @@ start cmd /k "cd backend && call ..\myenv\Scripts\activate && uvicorn main:app -
 
 
 REM Start Ollama in a separate window
-@REM start cmd /k "ollama run doctor-phi3"
+start cmd /k "ollama run doctor-phi3"
 
-start cmd /k "ollama run llama3.2:1b"
+@REM start cmd /k "ollama run llama3.2:1b?"
 
 REM Start Flutter frontend
 start cmd /k "cd frontend && flutter run"
