@@ -1,10 +1,13 @@
 # services/ollama_conversational.py
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import requests
 from services.response_parser import process_ollama_response
 
 OLLAMA_HOST = "http://localhost:11434"
 MODEL_NAME = "doctor-phi3"
-# MODEL_NAME = "llama3.2:1b "
 
 def build_followup_prompt(user_message, history, current_data):
     hist = "\n".join([f"User: {h['user']}\nAI: {h['ai']}" for h in history])
@@ -27,7 +30,7 @@ Respond in JSON only, with two keys:
 User: {user_message}
 AI:"""
 
-def ask_ollama_conversational(user_message, history=[]):
+def ask_ollama_conversational(user_message, history=[], current_data={}):
     prompt = build_followup_prompt(user_message, history)
     res = requests.post(
         f"{OLLAMA_HOST}/api/generate",

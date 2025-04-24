@@ -1,6 +1,6 @@
 from services.ollama_client import ask_ollama
 
 if __name__ == "__main__":
-    user_message = "I cough"
+    user_message = "I fever"
     extracted_data = ask_ollama(user_message)
     print("🔍 Extracted Data:", extracted_data)

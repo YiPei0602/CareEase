@@ -1,42 +1,79 @@
 import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import os
 
-# Load your dataset
-df = pd.read_csv("C:\\Users\\xiang\\Desktop\\Vhack25\\CareEase\\backend\\data\\healthcare_chatbot_dataset.csv")
+# Get the directory of the current script
+base_dir = os.path.dirname(os.path.abspath(__file__))
 
-def match_with_dataset(extracted_info, df):
-    # Normalize extracted info (convert to lowercase for consistent matching)
-    normalized_extracted_info = {key: value.lower() if isinstance(value, str) else value
-                                 for key, value in extracted_info.items()}
+# Construct the relative path
+data_path = os.path.join(base_dir, '..', 'data', 'healthcare_chatbot_dataset.csv')
 
-    # Function to match a row with the extracted information
-    def attribute_match(row):
-        # Compare each attribute in extracted_info with the corresponding row in the dataset
-        for column in extracted_info:
-            if isinstance(extracted_info[column], str):  # If the attribute is a string
-                if not any(val in row[column].lower() for val in normalized_extracted_info[column].split(",") if val.strip()):
-                    return False
-            else:  # For non-string attributes (like lists)
-                if extracted_info[column] != row[column]:
-                    return False
-        return True
+# Normalize and load
+df = pd.read_csv(os.path.normpath(data_path))
 
-    # Apply the matching function and return rows where there's a match
-    matches = df[df.apply(attribute_match, axis=1)]
-    return matches
+# Convert session data to flat string
+def flatten_session_data(session_data):
+    return " ".join(
+        str(session_data.get(key, "")).lower()
+        for key in ['symptoms', 'duration', 'severity', 'body_part', 'context']
+    )
 
-# Example usage
-extracted_info = {
-    "symptoms": ["fever", "loss_of_taste"],
-    "disease": "COVID-19",
-    "duration": "52 days",
-    "age group": "40-49",
-    "gender": "Male",
-    "medical history": "asthma",
-    "medications": "none",
-    "allergies": "latex, penicillin, seafood",
-    "biological traits": "immunocompromised",
-    "lifestyle & history": "physically_active, vaccinated",
+# Convert row data into a flat string for matching
+def flatten_row(row):
+    fields = ['Symptoms', 'Duration', 'Medical History', 'Medications', 'Allergies', 'Biological Traits', 'Lifestyle & History']
+    combined = []
+    for field in fields:
+        value = row.get(field, '')
+        if isinstance(value, str):
+            combined.append(value)
+        elif isinstance(value, list):
+            combined.extend(value)
+    return " ".join(combined).lower()
+
+# Match using TF-IDF + Cosine Similarity
+def match_disease_from_session(session_data):
+    user_text = flatten_session_data(session_data)
+
+    # Prepare dataset corpus
+    corpus = df.apply(flatten_row, axis=1).tolist()
+    corpus.insert(0, user_text)  # First is user input
+
+    # Vectorize
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(corpus)
+
+    # Calculate cosine similarity
+    cosine_similarities = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:]).flatten()
+    df['similarity_score'] = cosine_similarities
+
+    # Get top 3 matches
+    top_matches = df.sort_values(by='similarity_score', ascending=False).drop_duplicates(subset='Disease').head(3)
+
+    # Combine recommendations
+    # recommendations = top_matches['Recommendations'].tolist()
+    # unique_sentences = list(dict.fromkeys(" ".join(recommendations).split('. ')))  # Remove duplicates
+    # combined_recommendation = '. '.join(unique_sentences).strip('. ') + '.'
+
+    return {
+        'top_diseases': top_matches[['Disease', 'similarity_score']].to_dict(orient='records'),
+        # 'recommendation': combined_recommendation
+    }
+
+# Example session data
+session_data = {
+    'symptoms': 'fever loss of taste',
+    'duration': '52 days',
+    'severity': 'moderate',
+    'body_part': 'throat',
+    'context': 'history of asthma and immunocompromised'
 }
 
-matched_data = match_with_dataset(extracted_info, df)
-print(matched_data)
+result = match_disease_from_session(session_data)
+
+print("🩺 Top 3 Predicted Diseases:")
+for disease in result['top_diseases']:
+    print(f" - {disease['Disease']} (Score: {disease['similarity_score']:.4f})")
+
+print("\n✅ Suggested Care Recommendation:")
+print(result['recommendation'])

@@ -1,3 +1,6 @@
+##hard code user profile data for testing purposes
+
+
 def get_user_profile(user_id):
     return {
         "name": "Jane Doe",
