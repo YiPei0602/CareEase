@@ -22,15 +22,15 @@ class Footer extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(CupertinoIcons.chart_bar),
-          label: "Daily Tracker",
+          label: "Tracker",
         ),
         BottomNavigationBarItem(
           icon: Icon(CupertinoIcons.chat_bubble_2),
           label: "Chatbot",
         ),
         BottomNavigationBarItem(
-          icon: Icon(CupertinoIcons.search),
-          label: "Disease Spotter",
+          icon: Icon(CupertinoIcons.calendar_today),
+          label: "Appointment",
         ),
         BottomNavigationBarItem(
           icon: Icon(CupertinoIcons.person),

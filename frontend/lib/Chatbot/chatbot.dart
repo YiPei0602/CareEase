@@ -1,37 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:video_player/video_player.dart';
-import 'package:careease_app/Chatbot/api_service.dart';      // <-- your FastAPI client
+import 'package:careease_app/Chatbot/api_service.dart';
 import 'package:careease_app/Chatbot/chat_history.dart';
 import 'package:careease_app/Chatbot/stt_service.dart';
-import 'package:careease_app/Chatbot/avatar_service.dart';    // keep if you use D‑ID
+import 'package:careease_app/Chatbot/avatar_webpage.dart';
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({Key? key}) : super(key: key);
+
   @override
-  State<ChatbotScreen> createState() => _ChatbotScreenState();
+  _ChatbotScreenState createState() => _ChatbotScreenState();
 }
 
 class _ChatbotScreenState extends State<ChatbotScreen> {
   final _controller = TextEditingController();
-  final _scroll     = ScrollController();
-  final List<Map<String, dynamic>> _messages = [];
+  final _scroll = ScrollController();
+  List<List<Map<String, dynamic>>> _chatSessions = [[]];
+  int _currentSessionIndex = 0;
 
-  late VideoPlayerController _video;
   bool _speechMode = false;
-  bool _isTyping   = false;
-  bool _recording  = false;
+  bool _isTyping = false;
+  bool _recording = false;
 
   @override
   void initState() {
     super.initState();
-    _video = VideoPlayerController.asset('assets/doctor_avatar_female.mp4');
-    _controller.addListener(() => setState(() {
-      _isTyping = _controller.text.trim().isNotEmpty;
-    }));
-    _messages.add({
+    _controller.addListener(() {
+      setState(() {
+        _isTyping = _controller.text.trim().isNotEmpty;
+      });
+    });
+
+    _chatSessions[_currentSessionIndex].add({
       'sender': 'CareEase',
-      'text'  : 'Hey Lucas!\nHow are you feeling today?',
+      'text': 'Hey Lucas!\nHow are you feeling today?',
       'options': null,
       'isUser': false,
     });
@@ -39,49 +41,39 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   @override
   void dispose() {
-    _video.dispose();
     _controller.dispose();
     _scroll.dispose();
     super.dispose();
   }
 
-  /* ─────────── core chat send ─────────── */
   Future<void> _sendText(String text) async {
     if (text.trim().isEmpty) return;
 
     setState(() {
-      _messages.add({'sender': 'You', 'text': text.trim(), 'options': null, 'isUser': true});
+      _chatSessions[_currentSessionIndex]
+          .add({'sender': 'You', 'text': text.trim(), 'options': null, 'isUser': true});
       _controller.clear();
     });
     _scrollToBottom();
 
     try {
-      final bot = await ApiService.sendMessage(text); // {response, options}
+      final bot = await ApiService.sendMessage(text);
 
       setState(() {
-        _messages.add({
-          'sender' : 'CareEase',
-          'text'   : bot['response'],
+        _chatSessions[_currentSessionIndex].add({
+          'sender': 'CareEase',
+          'text': bot['response'],
           'options': (bot['options'] is List && (bot['options'] as List).isNotEmpty)
-    ? bot['options'] as List
-    : null,
-
-          'isUser' : false,
+              ? bot['options'] as List
+              : null,
+          'isUser': false,
         });
       });
       _scrollToBottom();
-
-      /* avatar (optional) */
-      if (_speechMode && bot['response'].toString().isNotEmpty) {
-        final url = await AvatarService.getAvatarVideo(bot['response']);
-        _video = VideoPlayerController.network(url);
-        await _video.initialize();
-        _video.play();
-      }
     } catch (e) {
-      setState(() => _messages.add({
+      setState(() => _chatSessions[_currentSessionIndex].add({
             'sender': 'CareEase',
-            'text'  : 'Error: $e',
+            'text': 'Error: $e',
             'options': null,
             'isUser': false,
           }));
@@ -101,7 +93,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     });
   }
 
-  /* ─────────── UI ─────────── */
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.of(context).padding.bottom;
@@ -109,18 +100,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       backgroundColor: const Color(0xFFF2EFF5),
       body: Stack(
         children: [
-          if (_speechMode && _video.value.isInitialized)
-            Positioned.fill(
-              child: FittedBox(
-                fit: BoxFit.cover,
-                child: SizedBox(
-                  width : _video.value.size.width,
-                  height: _video.value.size.height,
-                  child : VideoPlayer(_video),
-                ),
-              ),
-            ),
-
+          if (_speechMode) const Positioned.fill(child: AvatarWebPage()),
           Column(
             children: [
               _topBar(),
@@ -128,7 +108,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               _typingBar(bottom),
             ],
           ),
-
           if (_recording) _recordOverlay(),
         ],
       ),
@@ -141,15 +120,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           Tooltip(
             message: _speechMode ? 'Text Mode' : 'Avatar Mode',
             child: GestureDetector(
-              onTap: () async {
-                setState(() => _speechMode = !_speechMode);
-                if (_speechMode) {
-                  await _video.initialize();
-                  _video..seekTo(Duration.zero)..play();
-                } else {
-                  _video.pause();
-                }
-              },
+              onTap: () => setState(() => _speechMode = !_speechMode),
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: const BoxDecoration(
@@ -157,19 +128,50 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   shape: BoxShape.circle,
                   boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
                 ),
-                child: Icon(_speechMode ? CupertinoIcons.textformat
-                                        : CupertinoIcons.speaker_1_fill,
-                    color: CupertinoColors.activeBlue),
+                child: Icon(
+                  _speechMode
+                      ? CupertinoIcons.textformat
+                      : CupertinoIcons.speaker_1_fill,
+                  color: CupertinoColors.activeBlue,
+                ),
               ),
             ),
           ),
           const Spacer(),
           CupertinoButton.filled(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             borderRadius: BorderRadius.circular(20),
             onPressed: () => Navigator.push(
-              context, CupertinoPageRoute(builder: (_) => ChatHistoryScreen())),
+                context, CupertinoPageRoute(builder: (_) => ChatHistoryScreen())),
             child: const Text('Chat History'),
+          ),
+          const SizedBox(width: 8),
+
+          // New Session Only (Delete removed)
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.purple),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: CupertinoButton(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+              onPressed: () {
+                setState(() {
+                  _chatSessions.add([]);
+                  _currentSessionIndex = _chatSessions.length - 1;
+                  _chatSessions[_currentSessionIndex].add({
+                    'sender': 'CareEase',
+                    'text': 'Hey Lucas!\nHow are you feeling today?',
+                    'options': null,
+                    'isUser': false,
+                  });
+                });
+              },
+              child: const Text('New Session',
+                  style: TextStyle(color: Colors.purple)),
+            ),
           ),
         ]),
       );
@@ -177,9 +179,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   Widget _chatList() => ListView.builder(
         controller: _scroll,
         padding: const EdgeInsets.all(12),
-        itemCount: _messages.length,
+        itemCount: _chatSessions[_currentSessionIndex].length,
         itemBuilder: (_, i) {
-          final m = _messages[i];
+          final m = _chatSessions[_currentSessionIndex][i];
           return Column(
             crossAxisAlignment:
                 m['isUser'] ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -223,8 +225,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 onSubmitted: _sendText,
               ),
             ),
-
-            /* mic button with STT */
             GestureDetector(
               onTap: _isTyping ? () => _sendText(_controller.text) : null,
               onLongPressStart: (_) async {
@@ -240,10 +240,13 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   if (voice.isNotEmpty) _sendText(voice);
                 }
               },
-              child: Icon(_isTyping
-                  ? CupertinoIcons.arrow_up_circle_fill
-                  : CupertinoIcons.mic, size: 30,
-                  color: CupertinoColors.activeBlue),
+              child: Icon(
+                _isTyping
+                    ? CupertinoIcons.arrow_up_circle_fill
+                    : CupertinoIcons.mic,
+                size: 30,
+                color: CupertinoColors.activeBlue,
+              ),
             ),
             const SizedBox(width: 16),
           ]),
@@ -251,25 +254,31 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       );
 
   Widget _recordOverlay() => Positioned.fill(
-        child: Container(color: Colors.black45, child: const Center(
-          child: Text('Listening…', style: TextStyle(
-            color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600))),
+        child: Container(
+          color: Colors.black45,
+          child: const Center(
+              child: Text('Listening…',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600))),
         ),
       );
 }
 
-/*──────── bubble ───────*/
 class _Bubble extends StatelessWidget {
   const _Bubble({required this.text, required this.isUser});
   final String text;
   final bool isUser;
+
   @override
   Widget build(BuildContext ctx) => Align(
         alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 4),
           padding: const EdgeInsets.all(12),
-          constraints: BoxConstraints(maxWidth: MediaQuery.of(ctx).size.width * .7),
+          constraints:
+              BoxConstraints(maxWidth: MediaQuery.of(ctx).size.width * .7),
           decoration: BoxDecoration(
             color: isUser ? CupertinoColors.activeBlue : Colors.grey[300],
             borderRadius: BorderRadius.circular(18),

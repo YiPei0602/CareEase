@@ -17,13 +17,13 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           title = "Home";
           break;
         case 1:
-          title = "Daily Symptoms Tracker";
+          title = "Symptoms Tracker";
           break;
         case 2:
           title = "CareBot";
           break;
         case 3:
-          title = "Infectious Disease Spotter";
+          title = "Appointment";
           break;
         case 4:
           title = "Profile";
