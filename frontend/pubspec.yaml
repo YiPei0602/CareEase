@@ -77,10 +77,7 @@ flutter:
     - assets/CareEase_logo.png
     - assets/vhack_profile.jpg
     - assets/vhack_smartwatch.png
-    - assets/avatar/streaming-client-api.js
-    - assets/avatar/bg.png
-    - assets/avatar/doctor_avatar_male.png
-    - assets/avatar/index.html
+    - assets/avatar/
     - assets/doctor_1.jpg
     - assets/doctor_2.jpeg
     - assets/doctor_3.jpeg

@@ -1,22 +1,84 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval';">
-  <title>D‑ID Streaming POC</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;700&display=swap" rel="stylesheet">
-  <style>
-    /* …your existing styles… */
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap: content: https://api.d-id.com;">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        #video-wrapper {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+        }
+        video {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: transparent;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
-  <div id="content">
-    <!-- …your existing markup… -->
-  </div>
+    <div id="video-wrapper">
+        <video id="talk-video" playsinline autoplay muted></video>
+    </div>
+    <script src="streaming-client-api.js"></script>
+    <script>
+        // Error handling function
+        function handleError(error) {
+            console.error('Error:', error);
+            if (window.Flutter) {
+                window.Flutter.postMessage(JSON.stringify({
+                    type: 'error',
+                    message: error.toString()
+                }));
+            }
+        }
 
-  <!-- load the client script you shipped in assets -->
-  <script type="module" src="streaming-client-api.js"></script>
+        // Auto-connect when page loads
+        window.addEventListener('load', async () => {
+            try {
+                console.log('Page loaded, attempting to connect...');
+                // Small delay to ensure everything is initialized
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                if (typeof window.connectAvatar !== 'function') {
+                    throw new Error('Avatar connection function not found');
+                }
+                
+                await window.connectAvatar();
+                console.log('Avatar connected successfully');
+                
+                // Notify Flutter
+                if (window.Flutter) {
+                    window.Flutter.postMessage(JSON.stringify({
+                        type: 'connection',
+                        state: 'connected'
+                    }));
+                }
+            } catch (e) {
+                handleError(e);
+            }
+        });
+
+        // Handle unload
+        window.addEventListener('unload', () => {
+            if (typeof window.disconnectAvatar === 'function') {
+                window.disconnectAvatar();
+            }
+        });
+    </script>
 </body>
 </html>

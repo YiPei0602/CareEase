@@ -3,7 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 class GamificationPage extends StatefulWidget {
-  const GamificationPage({Key? key}) : super(key: key);
+  final List<String> recommendations;
+  
+  const GamificationPage({
+    Key? key,
+    this.recommendations = const [],
+  }) : super(key: key);
 
   @override
   State<GamificationPage> createState() => _GamificationPageState();
@@ -29,6 +34,13 @@ class _GamificationPageState extends State<GamificationPage>
     _progressAnimation = Tween<double>(begin: 0.0, end: 0.0).animate(
       CurvedAnimation(parent: _progressController, curve: Curves.easeOut),
     );
+
+    // If recommendations are provided, update the tasks
+    if (widget.recommendations.isNotEmpty) {
+      setState(() {
+        tasks = List.generate(widget.recommendations.length, (index) => false);
+      });
+    }
   }
 
   @override

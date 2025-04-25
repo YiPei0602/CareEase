@@ -11,15 +11,29 @@ static final String _baseUrl = Platform.isAndroid
 
   /// POST /chat
   static Future<Map<String, dynamic>> sendMessage(String msg) async {
-    final uri = Uri.parse('$_baseUrl/chat');
-    final res = await http.post(
-      uri,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'message': msg}),
-    );
-    if (res.statusCode == 200) {
-      return jsonDecode(res.body) as Map<String, dynamic>;
+    try {
+      final uri = Uri.parse('$_baseUrl/chat');
+      final res = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'message': msg.toLowerCase()}), // Convert to lowercase to match backend
+      );
+      
+      if (res.statusCode == 200) {
+        final Map<String, dynamic> responseBody = jsonDecode(res.body);
+        return {
+          'response': responseBody['response'],
+          'options': responseBody['options'],
+          'diagnosis': responseBody['diagnosis'],
+          'symptoms': responseBody['symptoms'],
+          'recommendations': responseBody['recommendations'],
+          'redirect': responseBody['redirect'],
+        };
+      }
+      throw Exception('Server error ${res.statusCode}');
+    } catch (e) {
+      print('API Error: $e'); // Add logging for debugging
+      rethrow;
     }
-    throw Exception('Server error ${res.statusCode}');
   }
 }

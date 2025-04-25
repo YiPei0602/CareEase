@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:careease_app/Chatbot/api_service.dart';
-import 'package:careease_app/Chatbot/chat_history.dart';
 import 'package:careease_app/Chatbot/stt_service.dart';
 import 'package:careease_app/Chatbot/avatar_webpage.dart';
+import 'chat_message.dart';
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({Key? key}) : super(key: key);
@@ -13,278 +13,288 @@ class ChatbotScreen extends StatefulWidget {
 }
 
 class _ChatbotScreenState extends State<ChatbotScreen> {
-  final _controller = TextEditingController();
-  final _scroll = ScrollController();
-  List<List<Map<String, dynamic>>> _chatSessions = [[]];
-  int _currentSessionIndex = 0;
-
-  bool _speechMode = false;
+  final TextEditingController _textController = TextEditingController();
+  final List<ChatMessage> _messages = [];
+  final ScrollController _scrollController = ScrollController();
+  bool _isAvatarMode = false;
+  String _currentAvatarText = '';
   bool _isTyping = false;
-  bool _recording = false;
 
   @override
   void initState() {
     super.initState();
-    _controller.addListener(() {
-      setState(() {
-        _isTyping = _controller.text.trim().isNotEmpty;
-      });
-    });
-
-    _chatSessions[_currentSessionIndex].add({
-      'sender': 'CareEase',
-      'text': 'Hey Lucas!\nHow are you feeling today?',
-      'options': null,
-      'isUser': false,
-    });
+    _initializeChat();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
-    _scroll.dispose();
+    _textController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
-  Future<void> _sendText(String text) async {
-    if (text.trim().isEmpty) return;
+  void _initializeChat() {
+    _handleSendMessage('hello');
+  }
 
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  void _startNewSession() {
     setState(() {
-      _chatSessions[_currentSessionIndex]
-          .add({'sender': 'You', 'text': text.trim(), 'options': null, 'isUser': true});
-      _controller.clear();
+      _messages.clear();
+      _currentAvatarText = '';
     });
+    _initializeChat();
+  }
+
+  Future<void> _handleSendMessage(String message) async {
+    if (message.trim().isEmpty) return;
+
+    // Add user message
+    setState(() {
+      _messages.add(ChatMessage(
+        text: message,
+        isUser: true,
+      ));
+      _isTyping = true;
+      _textController.clear();
+    });
+
     _scrollToBottom();
 
     try {
-      final bot = await ApiService.sendMessage(text);
-
-      setState(() {
-        _chatSessions[_currentSessionIndex].add({
-          'sender': 'CareEase',
-          'text': bot['response'],
-          'options': (bot['options'] is List && (bot['options'] as List).isNotEmpty)
-              ? bot['options'] as List
-              : null,
-          'isUser': false,
+      if (_isAvatarMode) {
+        // In avatar mode, let the avatar handle the response
+        setState(() {
+          _currentAvatarText = message;
         });
-      });
-      _scrollToBottom();
+      } else {
+        // In text mode, handle response normally
+        final response = await ApiService.sendMessage(message);
+        
+        String botResponse = '';
+        List<String> options = [];
+        
+        if (response.containsKey('response')) {
+          botResponse = response['response'];
+          if (response['options'] != null) {
+            options = List<String>.from(response['options']);
+          }
+        } else {
+          botResponse = "I'm sorry, I couldn't process that request.";
+        }
+
+        setState(() {
+          _messages.add(ChatMessage(
+            text: botResponse,
+            isUser: false,
+            options: options,
+            onOptionSelected: (selectedOption) {
+              _handleSendMessage(selectedOption);
+            },
+          ));
+          _isTyping = false;
+        });
+
+        _scrollToBottom();
+      }
     } catch (e) {
-      setState(() => _chatSessions[_currentSessionIndex].add({
-            'sender': 'CareEase',
-            'text': 'Error: $e',
-            'options': null,
-            'isUser': false,
-          }));
+      print('Error handling message: $e');
+      setState(() {
+        _messages.add(ChatMessage(
+          text: 'Sorry, I encountered an error. Please try again.',
+          isUser: false,
+        ));
+        _isTyping = false;
+      });
       _scrollToBottom();
     }
   }
 
-  void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scroll.hasClients) {
-        _scroll.animateTo(
-          _scroll.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
+  void _handleAvatarResponse(Map<String, dynamic> response) {
+    if (!_isAvatarMode) return;
+
+    String botResponse = '';
+    List<String> options = [];
+    
+    if (response.containsKey('response')) {
+      botResponse = response['response'];
+      if (response['options'] != null) {
+        options = List<String>.from(response['options']);
       }
+    }
+
+    setState(() {
+      _messages.add(ChatMessage(
+        text: botResponse,
+        isUser: false,
+        options: options,
+        onOptionSelected: (selectedOption) {
+          _handleSendMessage(selectedOption);
+        },
+      ));
+      _isTyping = false;
     });
+
+    _scrollToBottom();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bottom = MediaQuery.of(context).padding.bottom;
     return Scaffold(
-      backgroundColor: const Color(0xFFF2EFF5),
-      body: Stack(
-        children: [
-          if (_speechMode) const Positioned.fill(child: AvatarWebPage()),
-          Column(
-            children: [
-              _topBar(),
-              Expanded(child: _chatList()),
-              _typingBar(bottom),
-            ],
+      appBar: AppBar(
+        title: const Text('CareEase Chatbot'),
+        actions: [
+          // New Session Button
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _startNewSession,
+            tooltip: 'New Session',
           ),
-          if (_recording) _recordOverlay(),
+          // Chat History Button
+          IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: () {
+              // Navigate to chat history
+            },
+            tooltip: 'Chat History',
+          ),
+          // Avatar Mode Toggle
+          IconButton(
+            icon: Icon(_isAvatarMode ? Icons.chat : Icons.face),
+            onPressed: () {
+              setState(() {
+                _isAvatarMode = !_isAvatarMode;
+                if (_isAvatarMode && _messages.isNotEmpty) {
+                  for (var message in _messages) {
+                    if (!message.isUser) {
+                      _currentAvatarText = message.text;
+                      break;
+                    }
+                  }
+                }
+              });
+            },
+            tooltip: _isAvatarMode ? 'Switch to Text Mode' : 'Switch to Avatar Mode',
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          if (_isAvatarMode)
+            Expanded(
+              flex: 2,
+              child: Container(
+                margin: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(150),
+                ),
+                child: AvatarWebPage(
+                  initialText: _currentAvatarText,
+                  onResponse: _handleAvatarResponse,
+                ),
+              ),
+            ),
+          Expanded(
+            flex: 3,
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: _messages.length,
+              itemBuilder: (context, index) => _messages[index],
+            ),
+          ),
+          if (_isTyping)
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: LinearProgressIndicator(),
+            ),
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  offset: const Offset(0, -2),
+                  blurRadius: 4,
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _textController,
+                      decoration: const InputDecoration(
+                        hintText: 'Type a message...',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                      ),
+                      onSubmitted: _handleSendMessage,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: () => _handleSendMessage(_textController.text),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
-
-  Widget _topBar() => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-        child: Row(children: [
-          Tooltip(
-            message: _speechMode ? 'Text Mode' : 'Avatar Mode',
-            child: GestureDetector(
-              onTap: () => setState(() => _speechMode = !_speechMode),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-                ),
-                child: Icon(
-                  _speechMode
-                      ? CupertinoIcons.textformat
-                      : CupertinoIcons.speaker_1_fill,
-                  color: CupertinoColors.activeBlue,
-                ),
-              ),
-            ),
-          ),
-          const Spacer(),
-          CupertinoButton.filled(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            borderRadius: BorderRadius.circular(20),
-            onPressed: () => Navigator.push(
-                context, CupertinoPageRoute(builder: (_) => ChatHistoryScreen())),
-            child: const Text('Chat History'),
-          ),
-          const SizedBox(width: 8),
-
-          // New Session Only (Delete removed)
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.purple),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: CupertinoButton(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white,
-              onPressed: () {
-                setState(() {
-                  _chatSessions.add([]);
-                  _currentSessionIndex = _chatSessions.length - 1;
-                  _chatSessions[_currentSessionIndex].add({
-                    'sender': 'CareEase',
-                    'text': 'Hey Lucas!\nHow are you feeling today?',
-                    'options': null,
-                    'isUser': false,
-                  });
-                });
-              },
-              child: const Text('New Session',
-                  style: TextStyle(color: Colors.purple)),
-            ),
-          ),
-        ]),
-      );
-
-  Widget _chatList() => ListView.builder(
-        controller: _scroll,
-        padding: const EdgeInsets.all(12),
-        itemCount: _chatSessions[_currentSessionIndex].length,
-        itemBuilder: (_, i) {
-          final m = _chatSessions[_currentSessionIndex][i];
-          return Column(
-            crossAxisAlignment:
-                m['isUser'] ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-            children: [
-              _Bubble(text: m['text'], isUser: m['isUser']),
-              if (m['options'] != null)
-                Wrap(
-                  spacing: 8,
-                  children: (m['options'] as List<dynamic>).map((opt) {
-                    return GestureDetector(
-                      onTap: () => _sendText(opt.toString()),
-                      child: Chip(
-                        label: Text(opt.toString(),
-                            style: const TextStyle(color: Colors.blue)),
-                        backgroundColor: Colors.blue[50],
-                      ),
-                    );
-                  }).toList(),
-                ),
-            ],
-          );
-        },
-      );
-
-  Widget _typingBar(double bottom) => Padding(
-        padding: EdgeInsets.fromLTRB(16, 8, 16, 16 + bottom),
-        child: Container(
-          height: 52,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(26),
-            boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
-          ),
-          child: Row(children: [
-            const SizedBox(width: 16),
-            Expanded(
-              child: TextField(
-                controller: _controller,
-                decoration: const InputDecoration(
-                    hintText: 'Ask me anything…', border: InputBorder.none),
-                onSubmitted: _sendText,
-              ),
-            ),
-            GestureDetector(
-              onTap: _isTyping ? () => _sendText(_controller.text) : null,
-              onLongPressStart: (_) async {
-                if (!_isTyping) {
-                  setState(() => _recording = true);
-                  await SttService.start();
-                }
-              },
-              onLongPressEnd: (_) async {
-                if (!_isTyping) {
-                  setState(() => _recording = false);
-                  final voice = await SttService.stop();
-                  if (voice.isNotEmpty) _sendText(voice);
-                }
-              },
-              child: Icon(
-                _isTyping
-                    ? CupertinoIcons.arrow_up_circle_fill
-                    : CupertinoIcons.mic,
-                size: 30,
-                color: CupertinoColors.activeBlue,
-              ),
-            ),
-            const SizedBox(width: 16),
-          ]),
-        ),
-      );
-
-  Widget _recordOverlay() => Positioned.fill(
-        child: Container(
-          color: Colors.black45,
-          child: const Center(
-              child: Text('Listening…',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600))),
-        ),
-      );
 }
 
-class _Bubble extends StatelessWidget {
-  const _Bubble({required this.text, required this.isUser});
-  final String text;
-  final bool isUser;
+class ChatBubble extends StatelessWidget {
+  final ChatMessage message;
+
+  const ChatBubble({
+    Key? key,
+    required this.message,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext ctx) => Align(
-        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 4),
-          padding: const EdgeInsets.all(12),
-          constraints:
-              BoxConstraints(maxWidth: MediaQuery.of(ctx).size.width * .7),
-          decoration: BoxDecoration(
-            color: isUser ? CupertinoColors.activeBlue : Colors.grey[300],
-            borderRadius: BorderRadius.circular(18),
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(
+        left: message.isUser ? 64 : 0,
+        right: message.isUser ? 0 : 64,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: message.isUser
+            ? CupertinoColors.activeBlue
+            : CupertinoColors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
           ),
-          child: Text(text,
-              style: TextStyle(color: isUser ? Colors.white : Colors.black)),
+        ],
+      ),
+      child: Text(
+        message.text,
+        style: TextStyle(
+          color: message.isUser
+              ? CupertinoColors.white
+              : CupertinoColors.black,
+          fontSize: 16,
         ),
-      );
+      ),
+    );
+  }
 }
