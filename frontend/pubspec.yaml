@@ -40,6 +40,7 @@ dependencies:
   http: ^1.3.0
   video_player: ^2.8.6
   speech_to_text: ^6.3.0
+  flutter_tts: ^3.5.2
   intl: ^0.20.2
   shared_preferences: ^2.0.9
   fl_chart: ^0.66.2
@@ -78,6 +79,7 @@ flutter:
     - assets/vhack_profile.jpg
     - assets/vhack_smartwatch.png
     - assets/avatar/
+    - assets/avatar/doctor_avatar_male.png
     - assets/doctor_1.jpg
     - assets/doctor_2.jpeg
     - assets/doctor_3.jpeg

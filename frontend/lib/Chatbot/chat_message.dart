@@ -1,25 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class ChatMessage extends StatelessWidget {
   final String text;
   final bool isUser;
+  final bool transparent;            // for avatar-mode transparency
   final List<String> options;
-  final Function(String)? onOptionSelected;
+  final void Function(String)? onOptionSelected;
 
   const ChatMessage({
     Key? key,
     required this.text,
     required this.isUser,
+    this.transparent = false,
     this.options = const [],
     this.onOptionSelected,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // bubble color
+    final bubbleColor = isUser
+        ? Theme.of(context).primaryColor
+        : (transparent
+            ? Colors.white.withOpacity(0.6)
+            : Theme.of(context).cardColor);
+
+    final textColor = isUser
+        ? Colors.white
+        : Theme.of(context).textTheme.bodyLarge?.color;
+
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
       child: Row(
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isUser) ...[
@@ -31,14 +46,15 @@ class ChatMessage extends StatelessWidget {
           ],
           Flexible(
             child: Column(
-              crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment: isUser
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 10.0),
                   decoration: BoxDecoration(
-                    color: isUser 
-                        ? Theme.of(context).primaryColor
-                        : Theme.of(context).cardColor,
+                    color: bubbleColor,
                     borderRadius: BorderRadius.circular(20.0),
                     boxShadow: [
                       BoxShadow(
@@ -50,9 +66,7 @@ class ChatMessage extends StatelessWidget {
                   ),
                   child: Text(
                     text,
-                    style: TextStyle(
-                      color: isUser ? Colors.white : Theme.of(context).textTheme.bodyLarge?.color,
-                    ),
+                    style: TextStyle(color: textColor),
                   ),
                 ),
                 if (!isUser && options.isNotEmpty)
@@ -60,22 +74,21 @@ class ChatMessage extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Wrap(
                       spacing: 8.0,
-                      children: options.map((option) => 
-                        ElevatedButton(
-                          onPressed: () {
-                            if (onOptionSelected != null) {
-                              onOptionSelected!(option);
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.0),
+                      children: options
+                          .map(
+                            (option) => ElevatedButton(
+                              onPressed: () => onOptionSelected?.call(option),
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 8.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16.0),
+                                ),
+                              ),
+                              child: Text(option),
                             ),
-                          ),
-                          child: Text(option),
-                        ),
-                      ).toList(),
+                          )
+                          .toList(),
                     ),
                   ),
               ],
@@ -92,4 +105,4 @@ class ChatMessage extends StatelessWidget {
       ),
     );
   }
-} 
+}
